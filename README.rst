@@ -8,9 +8,6 @@ BOLD retriever
 .. image:: https://travis-ci.org/carlosp420/bold.png?branch=master
         :target: https://travis-ci.org/carlosp420/bold
 
-.. image:: https://pypip.in/d/bold/badge.png
-        :target: https://pypi.python.org/pypi/bold
-
 
 Python tools to invoke the BOLDDSYSTEMS API
 
