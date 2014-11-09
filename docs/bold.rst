@@ -1,22 +1,19 @@
-bold package
+bold Package
 ============
 
-Submodules
-----------
+:mod:`bold` Package
+-------------------
 
-bold.bold module
-----------------
+.. automodule:: bold.__init__
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`bold` Module
+------------------
 
 .. automodule:: bold.bold
     :members:
     :undoc-members:
     :show-inheritance:
 
-
-Module contents
----------------
-
-.. automodule:: bold
-    :members:
-    :undoc-members:
-    :show-inheritance:

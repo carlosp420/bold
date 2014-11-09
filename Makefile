@@ -41,6 +41,7 @@ test-all:
 	tox
 
 coverage:
+    nosetests --with-doctest --doctest-extension=rst docs
 	coverage run --source bold setup.py test
 	coverage report -m
 	coverage html
