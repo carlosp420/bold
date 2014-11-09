@@ -2,12 +2,10 @@
 BOLD retriever
 ===============================
 
-.. image:: https://badge.fury.io/py/bold.png
-    :target: http://badge.fury.io/py/bold
-
 .. image:: https://travis-ci.org/carlosp420/bold.png?branch=master
         :target: https://travis-ci.org/carlosp420/bold
-
+.. image:: https://img.shields.io/coveralls/carlosp420/bold.svg
+        :target: https://coveralls.io/r/carlosp420/bold?branch=master
 
 Python tools to invoke the BOLDDSYSTEMS API
 
