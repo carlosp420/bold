@@ -9,10 +9,10 @@ bold Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`bold` Module
+:mod:`bold.api` Module
 ------------------
 
-.. automodule:: bold.bold
+.. automodule:: bold.api
     :members:
     :undoc-members:
     :show-inheritance:

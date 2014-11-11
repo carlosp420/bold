@@ -1,6 +1,6 @@
-===============================
+==============
 BOLD retriever
-===============================
+==============
 
 .. image:: https://travis-ci.org/carlosp420/bold.png?branch=master
         :target: https://travis-ci.org/carlosp420/bold
