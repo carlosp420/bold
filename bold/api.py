@@ -1,8 +1,46 @@
+import xml.etree.ElementTree as ET
+
 from Bio._py3k import Request as _Request
 from Bio._py3k import urlopen as _urlopen
 from Bio._py3k import urlencode as _urlencode
 from Bio._py3k import _as_bytes
 from Bio._py3k import _as_string
+
+
+class Response(object):
+    """Accepts results from a call to the BOLD API. Parses the data and returns
+    a Response object.
+    """
+    def __init__(self):
+        self.id_from_bold = ''
+
+    def parse_data(self, result_string):
+        root = ET.fromstring(result_string)
+        ids_from_bold = []
+        for match in root.findall('match'):
+            out = dict()
+            # out['seq'] = str(seq_object)
+            # out['id'] = str(id)
+            similarity = match.find('similarity').text
+            out['similarity'] = similarity
+            tax_id = match.find('taxonomicidentification').text
+            out['tax_id'] = tax_id
+
+            if match.find('specimen/collectionlocation/country').text:
+                ctry = match.find('specimen/collectionlocation/country').text
+                out['collection_country'] = ctry
+            else:
+
+                out['collection_country'] = "None"
+
+            myid = match.find('ID').text
+            out['bold_id'] = myid
+
+            # good code from here
+            # TODO parse all items as objects
+            ids_from_bold.append(myid)
+        self.id_from_bold = ids_from_bold
+
 
 
 class Request(object):
@@ -24,7 +62,9 @@ class Request(object):
         req = _Request(f, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
         result = _as_string(handle.read())
-        return result
+        response = Response()
+        response.parse_data(result)
+        return response
 
 
 def request(service, seq, db, **kwargs):
