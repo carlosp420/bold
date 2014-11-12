@@ -1,5 +1,7 @@
 from Bio._py3k import Request as _Request
 from Bio._py3k import urlopen as _urlopen
+from Bio._py3k import urlencode as _urlencode
+from Bio._py3k import _as_bytes
 from Bio._py3k import _as_string
 
 
@@ -15,7 +17,9 @@ class Request(object):
     """
     def get(self, service, seq, db, url):
         # TODO convert seq to string sequence if it is seq_record object
-        req = _Request(url, seq)
+        params = _urlencode({'db': db, 'sequence': seq})
+        f = url + "?" + params
+        req = _Request(f, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
         result = _as_string(handle.read())
         return result
