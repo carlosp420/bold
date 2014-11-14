@@ -65,7 +65,7 @@ class Request(object):
     """Constructs a :class:`Request <Request>`. Sends it and returns a
     :class:`Response <Response>` object.
     """
-    def get(self, service, seq, db, url, **kwargs):
+    def get(self, service, **kwargs):
         """
         :param service: the BOLD API alias to interact with.
         :param seq: DNA sequence string or seq_record object.
@@ -74,11 +74,14 @@ class Request(object):
                    ``COX1_L640bp``.
         :param url: end-point for the API of the service of interest.
         """
-        sequence = utils._prepare_sequence(seq)
+        url = ''
 
-        params = _urlencode({'db': db, 'sequence': sequence})
-        f = url + "?" + params
-        req = _Request(f, headers={'User-Agent': 'BiopythonClient'})
+        if service == 'call_id':
+            sequence = utils._prepare_sequence(kwargs['seq'])
+            params = _urlencode({'db': kwargs['db'], 'sequence': sequence})
+            url = kwargs['url'] + "?" + params
+
+        req = _Request(url, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
         result = _as_string(handle.read())
         response = Response()
@@ -86,7 +89,7 @@ class Request(object):
         return response
 
 
-def request(service, seq, db, **kwargs):
+def request(service, **kwargs):
     """Build our request.
 
     :param service: the BOLD API alias to interact with.
@@ -96,12 +99,13 @@ def request(service, seq, db, **kwargs):
                ``COX1_L640bp``.
     :return
     """
-    url = ''
+    req = Request()
+
     if service == 'call_id':
         # User wants the service `call_id`. So we need to use this URL:
         url = "http://boldsystems.org/index.php/Ids_xml"
-    req = Request()
-    return req.get(service=service, seq=seq, db=db, url=url, **kwargs)
+        return req.get(service=service, url=url, **kwargs)
+    #if service ==
 
 
 def call_id(seq, db, **kwargs):
@@ -113,4 +117,13 @@ def call_id(seq, db, **kwargs):
     :param kwargs:
     :return:
     """
-    return request('call_id', seq, db, **kwargs)
+    return request('call_id', seq=seq, db=db, **kwargs)
+
+
+def call_taxon_search(taxonomic_identification, fuzzy=False):
+    """Call the
+    :param taxonomic_identification: species or any taxon name
+    :param fuzzy: False by default
+    :return:
+    """
+    return request('call_taxon_search', fuzzy)

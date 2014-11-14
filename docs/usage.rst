@@ -6,11 +6,12 @@ methods to interact with the several end-points.
 
 ID Engine API
 -------------
-To use BOLD in a project::
+The ID Engine API is found at this URL:
+http://www.boldsystems.org/index.php/resources/api?type=idengine
+
+How to use it::
 
     >>> import bold
-
-    >>> # ID Engine API http://www.boldsystems.org/index.php/resources/api?type=idengine
     >>> seq = 'TTTTTGGTATTTGAGCAGGAATAGTAGGAACTTCTCTCAGTTTAATTATTCGAATAGAATTAGGTAATCCAGGTTTCTTAATTGGAGATGATCAAATTTATAATACTATTGTAACAGCCCATGCTTTTATTATAATTTTTTTTATAGTTATACCTATTGTAATTGGAGGATTTGGAAATTGACTAGTTCCCCTAATATTAGGTGCACCTGATATAGCTTTCCCTCGTATAAATAATATAAGATATTGACTACTTCCACCATCTTTAATATTATTAATTTCAAGTAGTATTGTAGAAAATGGAGCTGGAACAGGTTGAACAGTTTACCCCCCTCTTTCCTCTAATATTGCTCATAGAGGAACCTCAGTAGACTTAGCAATTTTTTCTCTTCATTTAGCTGGTATTTCTTCTATTTTAGGAGCTATTAATTTTATTACTACAATTATTAATATACGAGTTAATGGAATATCCTATGATCAAATACCTTTATTTGTTTGAGCTGTTGGAATTACAGCTCTTCTTTTACTTCTTTCTTTACCTGTTTTAGCAGGAGCTATCACAATACTTCTTACAGATCGAAATTTAAATACATCATTTTTTGATCCTGCAGGAGGAGGTGATCCAATTTTATACCAACATTTATTTTGATTTTTTGGTCACCC'
 
     >>> res = bold.call_id(seq, db='COX1')
@@ -31,3 +32,18 @@ To use BOLD in a project::
     -23.9
     >>> item['longitude']
     -46.39
+
+TaxonSearch API
+---------------
+
+Also known as **Taxon Name Service** found at this URL:
+http://www.boldsystems.org/index.php/resources/api?type=taxonomy#Ideasforwebservices-SequenceParameters
+
+It retrieves taxonomic information based on a taxon name::
+
+    >>> import bold
+    >>> taxonomic_identification = 'Euptychia ordinata'
+
+    >>> res = bold.call_taxon_search(taxonomic_identification, fuzzy=False)
+    >>> res.taxid
+    302603
