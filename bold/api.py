@@ -12,35 +12,51 @@ class Response(object):
     a Response object.
     """
     def __init__(self):
+        self.items = []
         self.id_from_bold = ''
 
     def parse_data(self, result_string):
+        """Parses XML response from BOLD.
+
+        :param result_string: XML string returned from BOLD
+        :return: list of all items as dicts
+        """
+        items_from_bold = []
+        append = items_from_bold.append
+
         root = ET.fromstring(result_string)
-        ids_from_bold = []
         for match in root.findall('match'):
-            out = dict()
-            # out['seq'] = str(seq_object)
-            # out['id'] = str(id)
-            similarity = match.find('similarity').text
-            out['similarity'] = similarity
-            tax_id = match.find('taxonomicidentification').text
-            out['tax_id'] = tax_id
+            item = dict()
+            item['bold_id'] = match.find('ID').text
+            item['tax_id'] = match.find('taxonomicidentification').text
+            item['sequencedescription'] = match.find('sequencedescription').text
+            item['database'] = match.find('database').text
+            item['citation'] = match.find('citation').text
+            item['taxonomicidentification'] = match.find('taxonomicidentification').text
+            item['similarity'] = float(match.find('similarity').text)
+
+            if match.find('specimen/url').text:
+                item['specimen_url'] = match.find('specimen/url').text
+            else:
+                item['specimen_url'] = ''
 
             if match.find('specimen/collectionlocation/country').text:
-                ctry = match.find('specimen/collectionlocation/country').text
-                out['collection_country'] = ctry
+                item['collection_country'] = match.find('specimen/collectionlocation/country').text
             else:
+                item['collection_country'] = ''
 
-                out['collection_country'] = "None"
+            if match.find('specimen/collectionlocation/coord/lat').text:
+                item['lat'] = float(match.find('specimen/collectionlocation/coord/lat').text)
+            else:
+                item['lat'] = ''
 
-            myid = match.find('ID').text
-            out['bold_id'] = myid
+            if match.find('specimen/collectionlocation/coord/lon').text:
+                item['lon'] = float(match.find('specimen/collectionlocation/coord/lon').text)
+            else:
+                item['lon'] = ''
 
-            # good code from here
-            # TODO parse all items as objects
-            ids_from_bold.append(myid)
-        self.id_from_bold = ids_from_bold
-
+            append(item)
+        self.items = items_from_bold
 
 
 class Request(object):
