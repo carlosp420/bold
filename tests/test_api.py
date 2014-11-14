@@ -16,7 +16,7 @@ class TestApi(unittest.TestCase):
         res = bold.call_id(seq, db)
         for item in res.items:
             if item['similarity'] == 1:
-                self.assertEqual('Euptychia ordinata', item['taxonomicidentification'])
+                self.assertEqual('Euptychia ordinata', item['taxonomic_identification'])
 
     def tearDown(self):
         pass

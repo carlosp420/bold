@@ -40,12 +40,11 @@ test:
 test-all:
 	tox
 
-coverage:
+coverage: clean-test
 	nosetests --with-doctest --doctest-extension=rst docs
 	coverage run --source bold setup.py test
 	coverage report -m
 	coverage html
-	open htmlcov/index.html
 
 docs:
 	rm -f docs/bold.rst

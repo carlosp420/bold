@@ -1,3 +1,4 @@
+import collections
 import xml.etree.ElementTree as ET
 
 from Bio._py3k import Request as _Request
@@ -28,11 +29,10 @@ class Response(object):
         for match in root.findall('match'):
             item = dict()
             item['bold_id'] = match.find('ID').text
-            item['tax_id'] = match.find('taxonomicidentification').text
             item['sequencedescription'] = match.find('sequencedescription').text
             item['database'] = match.find('database').text
             item['citation'] = match.find('citation').text
-            item['taxonomicidentification'] = match.find('taxonomicidentification').text
+            item['taxonomic_identification'] = match.find('taxonomicidentification').text
             item['similarity'] = float(match.find('similarity').text)
 
             if match.find('specimen/url').text:
@@ -46,14 +46,14 @@ class Response(object):
                 item['collection_country'] = ''
 
             if match.find('specimen/collectionlocation/coord/lat').text:
-                item['lat'] = float(match.find('specimen/collectionlocation/coord/lat').text)
+                item['latitude'] = float(match.find('specimen/collectionlocation/coord/lat').text)
             else:
-                item['lat'] = ''
+                item['latitude'] = ''
 
             if match.find('specimen/collectionlocation/coord/lon').text:
-                item['lon'] = float(match.find('specimen/collectionlocation/coord/lon').text)
+                item['longitude'] = float(match.find('specimen/collectionlocation/coord/lon').text)
             else:
-                item['lon'] = ''
+                item['longitude'] = ''
 
             append(item)
         self.items = items_from_bold
