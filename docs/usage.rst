@@ -2,7 +2,7 @@
 Usage
 =====
 
-To use BOLD retriever in a project::
+To use BOLD in a project::
 
     >>> import bold
 
