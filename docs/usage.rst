@@ -1,7 +1,11 @@
 =====
 Usage
 =====
+This package BOLD can be used to interact with the BOLDSYSTEMS API. We can use
+methods to interact with the several end-points.
 
+ID Engine API
+-------------
 To use BOLD in a project::
 
     >>> import bold
