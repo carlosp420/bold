@@ -1,10 +1,10 @@
-import collections
+import json
+import logging
 import xml.etree.ElementTree as ET
 
 from Bio._py3k import Request as _Request
 from Bio._py3k import urlopen as _urlopen
 from Bio._py3k import urlencode as _urlencode
-from Bio._py3k import _as_bytes
 from Bio._py3k import _as_string
 
 from . import utils
@@ -16,49 +16,76 @@ class Response(object):
     """
     def __init__(self):
         self.items = []
-        self.id_from_bold = ''
+        self.taxid = ''
+        self.division = ''
 
-    def parse_data(self, result_string):
+    def parse_data(self, service, result_string):
         """Parses XML response from BOLD.
 
-        :param result_string: XML string returned from BOLD
-        :return: list of all items as dicts
+        :param result_string: XML or JSON string returned from BOLD
+        :return: list of all items as dicts if service=call_id
         """
-        items_from_bold = []
-        append = items_from_bold.append
+        if service == 'call_id':
+            items_from_bold = []
+            append = items_from_bold.append
 
-        root = ET.fromstring(result_string)
-        for match in root.findall('match'):
-            item = dict()
-            item['bold_id'] = match.find('ID').text
-            item['sequencedescription'] = match.find('sequencedescription').text
-            item['database'] = match.find('database').text
-            item['citation'] = match.find('citation').text
-            item['taxonomic_identification'] = match.find('taxonomicidentification').text
-            item['similarity'] = float(match.find('similarity').text)
+            root = ET.fromstring(result_string)
+            for match in root.findall('match'):
+                item = dict()
+                item['bold_id'] = match.find('ID').text
+                item['sequencedescription'] = match.find('sequencedescription').text
+                item['database'] = match.find('database').text
+                item['citation'] = match.find('citation').text
+                item['taxonomic_identification'] = match.find('taxonomicidentification').text
+                item['similarity'] = float(match.find('similarity').text)
 
-            if match.find('specimen/url').text:
-                item['specimen_url'] = match.find('specimen/url').text
-            else:
-                item['specimen_url'] = ''
+                if match.find('specimen/url').text:
+                    item['specimen_url'] = match.find('specimen/url').text
+                else:
+                    item['specimen_url'] = ''
 
-            if match.find('specimen/collectionlocation/country').text:
-                item['collection_country'] = match.find('specimen/collectionlocation/country').text
-            else:
-                item['collection_country'] = ''
+                if match.find('specimen/collectionlocation/country').text:
+                    item['collection_country'] = match.find('specimen/collectionlocation/country').text
+                else:
+                    item['collection_country'] = ''
 
-            if match.find('specimen/collectionlocation/coord/lat').text:
-                item['latitude'] = float(match.find('specimen/collectionlocation/coord/lat').text)
-            else:
-                item['latitude'] = ''
+                if match.find('specimen/collectionlocation/coord/lat').text:
+                    item['latitude'] = float(match.find('specimen/collectionlocation/coord/lat').text)
+                else:
+                    item['latitude'] = ''
 
-            if match.find('specimen/collectionlocation/coord/lon').text:
-                item['longitude'] = float(match.find('specimen/collectionlocation/coord/lon').text)
-            else:
-                item['longitude'] = ''
+                if match.find('specimen/collectionlocation/coord/lon').text:
+                    item['longitude'] = float(match.find('specimen/collectionlocation/coord/lon').text)
+                else:
+                    item['longitude'] = ''
 
-            append(item)
-        self.items = items_from_bold
+                append(item)
+            self.items = items_from_bold
+
+        if service == 'call_taxon_search':
+            response = json.loads(result_string)
+            found_division = False
+            if hasattr(response, 'items'):
+                for k, v in response.items():
+                    try:
+                        if v['tax_division'] == 'Animals':
+                            # this is the taxID
+                            found_division = True
+                            self.division = 'animal'
+                            self.taxid = k
+                    except:
+                        logging.warning("Error: %s" % str(r.text))
+
+                if not found_division:
+                    for k, v in response.items():
+                        try:
+                            if v['tax_division'] != 'Animals':
+                                # this is the taxid
+                                self.division = 'not animal'
+                                self.taxid = k
+                        except:
+                            logging.warning("Got funny reply from BOLD.")
+
 
 
 class Request(object):
@@ -81,11 +108,22 @@ class Request(object):
             params = _urlencode({'db': kwargs['db'], 'sequence': sequence})
             url = kwargs['url'] + "?" + params
 
+        if service == 'call_taxon_search':
+            if kwargs['fuzzy']:
+                fuzzy = 'true'
+            else:
+                fuzzy = 'false'
+            params = _urlencode({
+                'taxName': kwargs['taxonomic_identification'],
+                'fuzzy': fuzzy,
+            })
+            url = kwargs['url'] + "?" + params
+
         req = _Request(url, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
         result = _as_string(handle.read())
         response = Response()
-        response.parse_data(result)
+        response.parse_data(service, result)
         return response
 
 
@@ -105,7 +143,10 @@ def request(service, **kwargs):
         # User wants the service `call_id`. So we need to use this URL:
         url = "http://boldsystems.org/index.php/Ids_xml"
         return req.get(service=service, url=url, **kwargs)
-    #if service ==
+
+    if service == 'call_taxon_search':
+        url = "http://www.boldsystems.org/index.php/API_Tax/TaxonSearch"
+        return req.get(service=service, url=url, **kwargs)
 
 
 def call_id(seq, db, **kwargs):
@@ -126,4 +167,7 @@ def call_taxon_search(taxonomic_identification, fuzzy=False):
     :param fuzzy: False by default
     :return:
     """
-    return request('call_taxon_search', fuzzy)
+    return request('call_taxon_search',
+                   taxonomic_identification=taxonomic_identification,
+                   fuzzy=fuzzy
+                   )

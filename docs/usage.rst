@@ -46,4 +46,4 @@ It retrieves taxonomic information based on a taxon name::
 
     >>> res = bold.call_taxon_search(taxonomic_identification, fuzzy=False)
     >>> res.taxid
-    302603
+    '302603'

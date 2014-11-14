@@ -6,3 +6,4 @@ __version__ = '0.0.0'
 
 
 from .api import call_id
+from .api import call_taxon_search

@@ -17,3 +17,10 @@ bold Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`bold.utils` Module
+------------------
+
+.. automodule:: bold.utils
+:members:
+        :undoc-members:
+        :show-inheritance:
