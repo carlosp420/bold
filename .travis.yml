@@ -13,8 +13,6 @@ python:
 install: pip install -r requirements-test.txt
 
 # command to run tests, e.g. python setup.py test
-script:
-    nosetests --with-doctest --doctest-extension=rst docs
-    coverage run --source bold setup.py test
+script: coverage run --source bold setup.py test
 
 after_success: coveralls
