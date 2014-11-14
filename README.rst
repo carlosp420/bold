@@ -6,7 +6,7 @@ BOLD
 .. image:: https://coveralls.io/repos/carlosp420/bold/badge.png
         :target: https://coveralls.io/r/carlosp420/bold
 .. image:: https://readthedocs.org/projects/bold/badge/?version=latest
-        :target: https://readthedocs.org/projects/bold/?badge=latest
+        :target: http://bold.readthedocs.org/en/latest/
         :alt: Documentation Status
 
 Python tools to invoke the BOLDDSYSTEMS API
