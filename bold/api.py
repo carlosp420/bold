@@ -7,6 +7,8 @@ from Bio._py3k import urlencode as _urlencode
 from Bio._py3k import _as_bytes
 from Bio._py3k import _as_string
 
+from . import utils
+
 
 class Response(object):
     """Accepts results from a call to the BOLD API. Parses the data and returns
@@ -72,8 +74,9 @@ class Request(object):
                    ``COX1_L640bp``.
         :param url: end-point for the API of the service of interest.
         """
-        # TODO convert seq to string sequence if it is seq_record object
-        params = _urlencode({'db': db, 'sequence': seq})
+        sequence = utils._prepare_sequence(seq)
+
+        params = _urlencode({'db': db, 'sequence': sequence})
         f = url + "?" + params
         req = _Request(f, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
