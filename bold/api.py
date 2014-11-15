@@ -68,6 +68,7 @@ class Response(object):
             self.items = items_from_bold
 
         if service == 'call_taxon_search':
+            # TODO sometimes response can contain more than one JSON object.
             response = json.loads(result_string)
             if hasattr(response, 'items'):
                 for k, v in response.items():
