@@ -38,6 +38,12 @@ class TestApi(unittest.TestCase):
         self.assertEqual(302603, res.tax_id)
         self.assertEqual(7044, res.parent_id)
 
+        json_string = '{"taxid":891,"taxon":"Fabaceae","tax_rank":"family","tax_division":"Plants","parentid":187,"parentname":"Fabales","taxonrep":"Fabaceae"}'
+        res = api.Response()
+        res.parse_json(json_string)
+        self.assertEqual('Fabaceae', res.taxon)
+        self.assertEqual('Plants', res.tax_division)
+
     def tearDown(self):
         pass
 
