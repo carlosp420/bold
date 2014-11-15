@@ -16,8 +16,13 @@ class Response(object):
     """
     def __init__(self):
         self.items = []
-        self.taxid = ''
-        self.division = ''
+        self.tax_id = ''
+        self.taxon = ''
+        self.tax_rank = ''
+        self.tax_division = ''
+        self.parent_id = ''
+        self.parent_name = ''
+        self.taxon_rep = ''
 
     def parse_data(self, service, result_string):
         """Parses XML response from BOLD.
@@ -64,27 +69,25 @@ class Response(object):
 
         if service == 'call_taxon_search':
             response = json.loads(result_string)
-            found_division = False
             if hasattr(response, 'items'):
                 for k, v in response.items():
                     try:
-                        if v['tax_division'] == 'Animals':
-                            # this is the taxID
-                            found_division = True
-                            self.division = 'animal'
-                            self.taxid = k
+                        self.tax_id = int(k)
+                        if v['taxon']:
+                            self.taxon = v['taxon']
+                        if v['tax_rank']:
+                            self.tax_rank = v['tax_rank']
+                        if v['tax_division']:
+                            self.tax_division = v['tax_division']
+                        if v['parentid']:
+                            self.parent_id = v['parentid']
+                        if v['parentname']:
+                            self.parent_name = v['parentname']
+                        if v['taxonrep']:
+                            self.taxon_rep = v['taxonrep']
                     except:
-                        logging.warning("Error: %s" % str(r.text))
+                        logging.warning("Error: %s" % str(response))
 
-                if not found_division:
-                    for k, v in response.items():
-                        try:
-                            if v['tax_division'] != 'Animals':
-                                # this is the taxid
-                                self.division = 'not animal'
-                                self.taxid = k
-                        except:
-                            logging.warning("Got funny reply from BOLD.")
 
 
 

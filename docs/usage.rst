@@ -45,5 +45,13 @@ It retrieves taxonomic information based on a taxon name::
     >>> taxonomic_identification = 'Euptychia ordinata'
 
     >>> res = bold.call_taxon_search(taxonomic_identification, fuzzy=False)
-    >>> res.taxid
-    '302603'
+    >>> res.tax_id
+    302603
+    >>> res.tax_division
+    'Plants'
+    >>> res.tax_rank
+    'family'
+    >>> res.parent_name
+    'Fabales'
+    >>> res.parent_id
+    187

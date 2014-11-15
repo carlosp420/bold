@@ -24,6 +24,9 @@ class TestUtils(unittest.TestCase):
         result = utils._prepare_sequence(seq)
         self.assertEqual(expected, result)
 
+        seq = {'not a seq object': 'dummy'}
+        self.assertRaises(AttributeError, utils._prepare_sequence, seq)
+
     def tearDown(self):
         pass
 
