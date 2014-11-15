@@ -85,8 +85,16 @@ class Response(object):
                             self.parent_name = v['parentname']
                         if v['taxonrep']:
                             self.taxon_rep = v['taxonrep']
-                    except:
-                        logging.warning("Error: %s" % str(response))
+                    except KeyError:
+                        attrs = {'tax_id': self.tax_id, 'taxon': self.taxon,
+                                 'tax_rank': self.tax_rank, 'tax_division': self.tax_division,
+                                 'parent_id': self.parent_id, 'parent_name': self.parent_name,
+                                 'taxon_rep': self.taxon_rep,
+                                 }
+                        for k, v in attrs.items():
+                            if v == '':
+                                # TODO show that warning comes from this module and function
+                                logging.warning("Couldn't find value for: ``%s``" % k)
 
 
 

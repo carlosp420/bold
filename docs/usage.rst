@@ -48,10 +48,10 @@ It retrieves taxonomic information based on a taxon name::
     >>> res.tax_id
     302603
     >>> res.tax_division
-    'Plants'
+    'Animals'
     >>> res.tax_rank
-    'family'
+    'species'
     >>> res.parent_name
-    'Fabales'
+    'Euptychia'
     >>> res.parent_id
-    187
+    7044

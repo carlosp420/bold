@@ -21,7 +21,7 @@ test_requirements = [
 
 setup(
     name='bold',
-    version='0.0.0',
+    version='0.0.1',
     description='Python tools to invoke the BOLDDSYSTEMS API',
     long_description=readme + '\n\n' + history,
     author='Carlos Pena',
