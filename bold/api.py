@@ -93,7 +93,6 @@ class Response(object):
                                  }
                         for k, v in attrs.items():
                             if v == '':
-                                # TODO show that warning comes from this module and function
                                 logging.warning("Couldn't find value for: ``%s``" % k)
 
 
