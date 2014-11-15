@@ -97,8 +97,6 @@ class Response(object):
                                 logging.warning("Couldn't find value for: ``%s``" % k)
 
 
-
-
 class Request(object):
     """Constructs a :class:`Request <Request>`. Sends it and returns a
     :class:`Response <Response>` object.
