@@ -95,6 +95,35 @@ class Response(object):
                             if v == '':
                                 logging.warning("Couldn't find value for: ``%s``" % k)
 
+        if service == 'call_taxon_data':
+            response = json.loads(result_string)
+            if hasattr(response, 'items'):
+                for k, v in response.items():
+                    try:
+                        if k == 'taxid':
+                            self.tax_id = v
+                        if k == 'taxon':
+                            self.taxon = v
+                        if k == 'tax_rank':
+                            self.tax_rank = v
+                        if k == 'tax_division':
+                            self.tax_division = v
+                        if k == 'parentid':
+                            self.parent_id = v
+                        if k == 'parentname':
+                            self.parent_name = v
+                        if k == 'taxonrep':
+                            self.taxon_rep = v
+                    except KeyError:
+                        attrs = {'tax_id': self.tax_id, 'taxon': self.taxon,
+                                 'tax_rank': self.tax_rank, 'tax_division': self.tax_division,
+                                 'parent_id': self.parent_id, 'parent_name': self.parent_name,
+                                 'taxon_rep': self.taxon_rep,
+                                 }
+                        for k, v in attrs.items():
+                            if v == '':
+                                logging.warning("Couldn't find value for: ``%s``" % k)
+
 
 class Request(object):
     """Constructs a :class:`Request <Request>`. Sends it and returns a
@@ -109,15 +138,15 @@ class Request(object):
                    ``COX1_L640bp``.
         :param url: end-point for the API of the service of interest.
         """
-        url = ''
+        params = ''
 
         if service == 'call_id':
             sequence = utils._prepare_sequence(kwargs['seq'])
             params = _urlencode({'db': kwargs['db'], 'sequence': sequence})
-            url = kwargs['url'] + "?" + params
 
         if service == 'call_taxon_search':
             if kwargs['fuzzy']:
+                # TODO: it shouldn't be: if kwargs['fuzzy'] is True ?
                 fuzzy = 'true'
             else:
                 fuzzy = 'false'
@@ -125,8 +154,14 @@ class Request(object):
                 'taxName': kwargs['taxonomic_identification'],
                 'fuzzy': fuzzy,
             })
-            url = kwargs['url'] + "?" + params
 
+        if service == 'call_taxon_data':
+            params = _urlencode({
+                'taxId': kwargs['tax_id'],
+                'dataTypes': kwargs['data_type'],
+            })
+
+        url = kwargs['url'] + "?" + params
         req = _Request(url, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
         result = _as_string(handle.read())
@@ -136,14 +171,10 @@ class Request(object):
 
 
 def request(service, **kwargs):
-    """Build our request.
+    """Build our request. Also do checks for proper use of arguments.
 
     :param service: the BOLD API alias to interact with.
-    :param seq: DNA sequence string or seq_record object.
-    :param db: the BOLD database of available records.
-               Choices: ``COX1_SPECIES``, ``COX1``, ``COX1_SPECIES_PUBLIC``,
-               ``COX1_L640bp``.
-    :return
+    :return Request object with correct URL.
     """
     req = Request()
 
@@ -154,6 +185,10 @@ def request(service, **kwargs):
 
     if service == 'call_taxon_search':
         url = "http://www.boldsystems.org/index.php/API_Tax/TaxonSearch"
+        return req.get(service=service, url=url, **kwargs)
+
+    if service == 'call_taxon_data':
+        url = "http://www.boldsystems.org/index.php/API_Tax/TaxonData"
         return req.get(service=service, url=url, **kwargs)
 
 
@@ -180,3 +215,14 @@ def call_taxon_search(taxonomic_identification, fuzzy=False):
                    taxonomic_identification=taxonomic_identification,
                    fuzzy=fuzzy
                    )
+
+
+def call_taxon_data(tax_id, **kwargs):
+    """Call the TaxonData API. It has several methods to get additional
+    metadata.
+
+    :param tax_id:
+    :param kwargs: data_type='basic'
+    :return:
+    """
+    return request('call_taxon_data', tax_id=tax_id, **kwargs)
