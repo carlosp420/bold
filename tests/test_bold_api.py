@@ -2,6 +2,7 @@
 import unittest
 
 import bold
+from bold import api
 
 
 class TestApi(unittest.TestCase):
@@ -29,6 +30,13 @@ class TestApi(unittest.TestCase):
         self.assertEqual(187, result.parent_id)
         self.assertEqual('Fabales', result.parent_name)
         self.assertEqual('Fabaceae', result.taxon_rep)
+
+    def test_parse_json(self):
+        json_string = '{"302603":{"taxid":302603,"taxon":"Euptychia ordinata","tax_rank":"species","tax_division":"Animals","parentid":7044,"parentname":"Euptychia"}}'
+        res = api.Response()
+        res.parse_json(json_string)
+        self.assertEqual(302603, res.tax_id)
+        self.assertEqual(7044, res.parent_id)
 
     def tearDown(self):
         pass

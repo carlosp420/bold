@@ -124,6 +124,40 @@ class Response(object):
                             if v == '':
                                 logging.warning("Couldn't find value for: ``%s``" % k)
 
+    def parse_json(self, result_string):
+        response = json.loads(result_string)
+        if hasattr(response, 'items'):
+            if 'taxid' in response:
+                # This a "simple" JSON object
+                pass
+            else:
+                for k, v in response.items():
+                    try:
+                        self.tax_id = int(k)
+                        if v['taxon']:
+                            self.taxon = v['taxon']
+                        if v['tax_rank']:
+                            self.tax_rank = v['tax_rank']
+                        if v['tax_division']:
+                            self.tax_division = v['tax_division']
+                        if v['parentid']:
+                            self.parent_id = v['parentid']
+                        if v['parentname']:
+                            self.parent_name = v['parentname']
+                        if v['taxonrep']:
+                            self.taxon_rep = v['taxonrep']
+                    except KeyError:
+                        attrs = {'tax_id': self.tax_id, 'taxon': self.taxon,
+                                 'tax_rank': self.tax_rank, 'tax_division': self.tax_division,
+                                 'parent_id': self.parent_id, 'parent_name': self.parent_name,
+                                 'taxon_rep': self.taxon_rep,
+                                 }
+                        for k, v in attrs.items():
+                            if v == '':
+                                logging.warning("Couldn't find value for: ``%s``" % k)
+        else:
+            print("BOLD did not return results")
+
 
 class Request(object):
     """Constructs a :class:`Request <Request>`. Sends it and returns a
