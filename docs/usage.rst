@@ -39,19 +39,41 @@ TaxonSearch API
 Also known as **Taxon Name Service** found at this URL:
 http://www.boldsystems.org/index.php/resources/api?type=taxonomy#Ideasforwebservices-SequenceParameters
 
-It retrieves taxonomic information based on a taxon name::
+It retrieves taxonomic information based on a **taxon name**::
 
     >>> import bold
     >>> taxonomic_identification = 'Euptychia ordinata'
 
     >>> res = bold.call_taxon_search(taxonomic_identification, fuzzy=False)
-    >>> res.tax_id
+    >>> item = res.items[0]  # there can be more than one result
+    >>> item['tax_id']
     302603
-    >>> res.tax_division
+    >>> item['tax_division']
     'Animals'
-    >>> res.tax_rank
+    >>> item['tax_rank']
     'species'
-    >>> res.parent_name
+    >>> item['parent_name']
     'Euptychia'
-    >>> res.parent_id
+    >>> item['parent_id']
+    7044
+
+TaxonData API
+-------------
+
+Also known as **Taxonomy ID Service** found at this URL:
+http://www.boldsystems.org/index.php/resources/api?type=taxonomy#Ideasforwebservices-SpecimenParameters
+It retrieves taxonomic information based on a
+**BOLD taxonomy ID** (``tax_id``).
+
+The ``basic`` API call returns similar metadata as our method
+``bold.call_taxon_search``::
+
+    >>> import bold
+    >>> tax_id = 302603
+
+    >>> res = bold.call_taxon_data(tax_id, data_type='basic')
+    >>> item = res.items[0]
+    >>> item['tax_rank']
+    'species'
+    >>> item['parent_id']
     7044

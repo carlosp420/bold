@@ -8,6 +8,7 @@ import logging
 
 from .api import call_id
 from .api import call_taxon_search
+from .api import call_taxon_data
 
 
 logging.basicConfig(format='[bold module]:%(levelname)s:%(message)s', level=logging.DEBUG)
