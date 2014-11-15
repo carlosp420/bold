@@ -170,7 +170,9 @@ def call_id(seq, db, **kwargs):
 
 
 def call_taxon_search(taxonomic_identification, fuzzy=False):
-    """Call the
+    """Call the TaxonSearch API
+    http://www.boldsystems.org/index.php/resources/api?type=taxonomy#Ideasforwebservices-SequenceParameters
+
     :param taxonomic_identification: species or any taxon name
     :param fuzzy: False by default
     :return:
