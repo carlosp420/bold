@@ -175,6 +175,7 @@ def call_taxon_search(taxonomic_identification, fuzzy=False):
     :param fuzzy: False by default
     :return:
     """
+    # TODO check when Fuzzy is True
     return request('call_taxon_search',
                    taxonomic_identification=taxonomic_identification,
                    fuzzy=fuzzy
