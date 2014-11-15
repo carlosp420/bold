@@ -78,6 +78,9 @@ class Response(object):
         append = items_from_bold.append
         response = json.loads(result_string)
         if hasattr(response, 'items'):
+            if 'taxid' in response:
+                # this is a simple JSON and we got only one item
+                response = [response]
             for obj in response:
                 item = dict()
                 if 'taxid' not in obj:

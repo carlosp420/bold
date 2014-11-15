@@ -37,14 +37,16 @@ class TestApi(unittest.TestCase):
         json_string = '{"302603":{"taxid":302603,"taxon":"Euptychia ordinata","tax_rank":"species","tax_division":"Animals","parentid":7044,"parentname":"Euptychia"}}'
         res = api.Response()
         res.parse_json(json_string)
-        self.assertEqual(302603, res.tax_id)
-        self.assertEqual(7044, res.parent_id)
+        item = res.items[0]
+        self.assertEqual(302603, item['tax_id'])
+        self.assertEqual(7044, item['parent_id'])
 
         json_string = '{"taxid":891,"taxon":"Fabaceae","tax_rank":"family","tax_division":"Plants","parentid":187,"parentname":"Fabales","taxonrep":"Fabaceae"}'
         res = api.Response()
         res.parse_json(json_string)
-        self.assertEqual('Fabaceae', res.taxon)
-        self.assertEqual('Plants', res.tax_division)
+        item = res.items[0]
+        self.assertEqual('Fabaceae', item['taxon'])
+        self.assertEqual('Plants', item['tax_division'])
 
     def tearDown(self):
         pass
