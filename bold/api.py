@@ -140,9 +140,14 @@ class Request(object):
             })
 
         if service == 'call_taxon_data':
+            try:
+                data_type = kwargs['data_type']
+            except KeyError:
+                # We will use by default data_type='basic'
+                data_type = 'basic'
             params = _urlencode({
                 'taxId': kwargs['tax_id'],
-                'dataTypes': kwargs['data_type'],
+                'dataTypes': data_type,
             })
 
         url = kwargs['url'] + "?" + params

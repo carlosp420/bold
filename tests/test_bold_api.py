@@ -33,6 +33,13 @@ class TestApi(unittest.TestCase):
         self.assertEqual('Fabales', item['parent_name'])
         self.assertEqual('Fabaceae', item['taxon_rep'])
 
+    def test_call_taxon_data(self):
+        tax_id = 302603
+        # using default datatype='basic'
+        res = bold.call_taxon_data(tax_id)
+        item = res.items[0]
+        self.assertEqual(7044, item['parent_id'])
+
     def test_parse_json(self):
         json_string = '{"302603":{"taxid":302603,"taxon":"Euptychia ordinata","tax_rank":"species","tax_division":"Animals","parentid":7044,"parentname":"Euptychia"}}'
         res = api.Response()

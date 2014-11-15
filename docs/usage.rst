@@ -72,7 +72,8 @@ The ``basic`` API call returns similar metadata as our method
     >>> tax_id = 302603
 
     >>> res = bold.call_taxon_data(tax_id, data_type='basic')
-    >>> res.tax_rank
+    >>> item = res.items[0]
+    >>> item['tax_rank']
     'species'
-    >>> res.parent_id
+    >>> item['parent_id']
     7044
