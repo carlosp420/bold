@@ -10,7 +10,7 @@ bold Package
     :show-inheritance:
 
 :mod:`bold.api` Module
-------------------
+----------------------
 
 .. automodule:: bold.api
     :members:
@@ -18,9 +18,9 @@ bold Package
     :show-inheritance:
 
 :mod:`bold.utils` Module
-------------------
+------------------------
 
 .. automodule:: bold.utils
-:members:
-        :undoc-members:
-        :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:

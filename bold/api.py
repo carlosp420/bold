@@ -171,8 +171,7 @@ def request(service, **kwargs):
     """Build our request. Also do checks for proper use of arguments.
 
     :param service: the BOLD API alias to interact with.
-    :return Request object with correct URL.
-    """
+    :return: Request object with correct URL."""
     req = Request()
 
     if service == 'call_id':
