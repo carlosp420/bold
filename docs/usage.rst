@@ -100,3 +100,18 @@ the ``basic`` data_type::
     'Momotus'
     >>> [(i['image'], i['photographer']) for i in item['images']]
     [('BSPBB/MJM_7364_IMG_2240_d+1345758620.JPG', 'Oscar Lopez')]
+
+Specimen data retrieval
+-----------------------
+API calls to retrieve matching specimen data records for a combination of
+parameters.
+See here for more info http://www.boldsystems.org/index.php/resources/api?type=webservices
+
+Parameters can accept more than one value by using the pipe symbol ``|``, which
+is equivalent do ``OR``.::
+
+    >>> taxon = 'Euptychia'
+    >>> res = bold.call_specimen_data(taxon)
+    >>> item = res.items[0]
+    >>> item['taxonomy_family_taxon_name']
+    'Nymphalidae'

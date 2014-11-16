@@ -73,6 +73,9 @@ class Response(object):
         if service == 'call_taxon_data':
             self.parse_json(result_string)
 
+        if service == 'call_specimen_data':
+            self.parse_xml(result_string)
+
     def parse_json(self, result_string):
         items_from_bold = []
         append = items_from_bold.append
@@ -116,6 +119,67 @@ class Response(object):
         else:
             print("BOLD did not return results")
 
+    def parse_xml(self, result_string):
+        items_from_bold = []
+        append = items_from_bold.append
+
+        root = ET.fromstring(result_string)
+        for match in root.findall('record'):
+            item = dict()
+            fields = [
+                'record_id', 'processid', 'bin_uri',
+                'specimen_identifiers/sampleid', 'specimen_identifiers/fieldnum',
+                'specimen_identifiers/institution_storing',
+                'taxonomy/identification_provided_by',
+                'taxonomy/phylum/taxon/taxID',
+                'taxonomy/phylum/taxon/name',
+                'taxonomy/class/taxon/taxID',
+                'taxonomy/class/taxon/name',
+                'taxonomy/order/taxon/taxID',
+                'taxonomy/order/taxon/name',
+                'taxonomy/family/taxon/taxID',
+                'taxonomy/family/taxon/name',
+                'taxonomy/genus/taxon/taxID',
+                'taxonomy/genus/taxon/name',
+                'taxonomy/species/taxon/taxID',
+                'taxonomy/species/taxon/name',
+                'specimen_details/voucher_type',
+                'specimen_details/voucher_desc',
+                'specimen_details/extrainfo',
+                'specimen_details/lifestage',
+                'collection_event/collector',
+                'collection_event/collectiondate',
+                'collection_event/coordinates/lat',
+                'collection_event/coordinates/long',
+                'collection_event/exactsite',
+                'collection_event/country',
+                'collection_event/province',
+                'specimen_imagery/media/mediaID',
+                'specimen_imagery/media/caption',
+                'specimen_imagery/media/metatags',
+                'specimen_imagery/media/copyright',
+                'specimen_imagery/media/image_file',
+                'tracefiles/read/read_id',
+                'tracefiles/read/run_date',
+                'tracefiles/read/sequencing_center',
+                'tracefiles/read/direction',
+                'tracefiles/read/seq_primer',
+                'tracefiles/read/trace_link',
+                'tracefiles/read/markercode',
+            ]
+            for field in fields:
+                if match.find(field) is not None:
+                    key = field.replace('/', '_')
+                    matched = match.findall(field)
+                    if len(matched) == 0:
+                        item[key] = None
+                    elif len(matched) == 1:
+                        item[key] = match.find(field).text
+                    elif len(matched) > 1:
+                        item[key] = [i.text for i in matched]
+            append(item)
+        self.items = items_from_bold
+
 
 class Request(object):
     """Constructs a :class:`Request <Request>`. Sends it and returns a
@@ -158,6 +222,11 @@ class Request(object):
                 'dataTypes': data_type,
             })
 
+        if service == 'call_specimen_data':
+            params = _urlencode({
+                'taxon': kwargs['taxon'],
+            })
+
         url = kwargs['url'] + "?" + params
         req = _Request(url, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
@@ -185,6 +254,10 @@ def request(service, **kwargs):
 
     if service == 'call_taxon_data':
         url = "http://www.boldsystems.org/index.php/API_Tax/TaxonData"
+        return req.get(service=service, url=url, **kwargs)
+
+    if service == 'call_specimen_data':
+        url = "http://www.boldsystems.org/index.php/API_Public/specimen"
         return req.get(service=service, url=url, **kwargs)
 
 
@@ -224,3 +297,13 @@ def call_taxon_data(tax_id, **kwargs):
     :return:
     """
     return request('call_taxon_data', tax_id=tax_id, **kwargs)
+
+
+def call_specimen_data(taxon):
+    """Call the Specimen Data Retrieval API. Returns matching specimen data
+    records.
+
+    :param taxon: `Aves|Reptilia`, `Bos taurus`
+    :return:
+    """
+    return request('call_specimen_data', taxon=taxon)
