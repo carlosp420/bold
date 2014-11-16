@@ -90,11 +90,7 @@ class Response(object):
             for obj in response:
                 item = dict()
                 try:
-                    # TODO fix this bug
-                    if re.search('^[0-9]+$', obj) is True:
-                        json_obj = response[obj]
-                    else:
-                        json_obj = response[obj]
+                    json_obj = response[obj]
                 except TypeError:
                     json_obj = obj
 
