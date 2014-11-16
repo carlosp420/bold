@@ -87,3 +87,18 @@ The ``data_tye=all`` API call returns additional data from several sources::
     >>> item['sequencinglabs']
     {'Mined from GenBank': 1}
 
+It is possible to obtain other kinds of data_type or do combination of them.
+See here for more info http://www.boldsystems.org/index.php/resources/api?type=taxonomy
+For example, we can get metadata about ``images`` alone, or in combination with
+the ``basic`` data_type::
+
+    >>> import bold
+    >>> tax_id = 88899
+    >>> res = bold.call_taxon_data(tax_id, data_type='basic,images')
+    >>> item = res.items[0]
+    >>> item['taxon']
+    'Momotus'
+    >>> item['images']['image']
+    'BSPBB/MJM_7364_IMG_2240_d+1345758620.JPG'
+    >>> item['images']['photographer']
+    'Oscar Lopez'
