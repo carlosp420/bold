@@ -37,6 +37,12 @@ class TestApi(unittest.TestCase):
         res = bold.call_taxon_search(taxonomic_identification, fuzzy=False)
         self.assertEqual(2, len(res.items))
 
+    def test_call_specimen_data(self):
+        taxon = 'Euptychia'
+        res = bold.call_specimen_data(taxon)
+        item = res.items[0]
+        self.assertEqual('Nymphalidae', item['taxonomy_family_taxon_name'])
+
     def test_call_taxon_data(self):
         tax_id = 302603
         # using default datatype='basic'
