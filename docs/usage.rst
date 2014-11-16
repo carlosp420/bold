@@ -65,7 +65,7 @@ http://www.boldsystems.org/index.php/resources/api?type=taxonomy#Ideasforwebserv
 It retrieves taxonomic information based on a
 **BOLD taxonomy ID** (``tax_id``).
 
-The ``basic`` API call returns similar metadata as our method
+The ``data_type=basic`` API call returns similar metadata as our method
 ``bold.call_taxon_search``::
 
     >>> import bold
@@ -77,3 +77,13 @@ The ``basic`` API call returns similar metadata as our method
     'species'
     >>> item['parent_id']
     7044
+
+The ``data_tye=all`` API call returns additional data from several sources::
+
+    >>> res = bold.call_taxon_data(tax_id, data_type='all')
+    >>> item = res.items[0]
+    >>> item['gbif_map']
+    'http://data.gbif.org/species/5132936/overviewMap.png'
+    >>> item['sequencinglabs']
+    {'Mined from GenBank': 1}
+
