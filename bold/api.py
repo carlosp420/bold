@@ -91,18 +91,20 @@ class Response(object):
                 for k, v in json_obj.items():
                     if k == 'taxid':
                         item['tax_id'] = v
-                    if k == 'taxon':
+                    elif k == 'taxon':
                         item['taxon'] = v
-                    if k == 'tax_rank':
+                    elif k == 'tax_rank':
                         item['tax_rank'] = v
-                    if k == 'tax_division':
+                    elif k == 'tax_division':
                         item['tax_division'] = v
-                    if k == 'parentid':
+                    elif k == 'parentid':
                         item['parent_id'] = v
-                    if k == 'parentname':
+                    elif k == 'parentname':
                         item['parent_name'] = v
-                    if k == 'taxonrep':
+                    elif k == 'taxonrep':
                         item['taxon_rep'] = v
+                    else:
+                        item[k] = v
                 append(item)
             self.items = items_from_bold
         else:
@@ -213,7 +215,7 @@ def call_taxon_data(tax_id, **kwargs):
     metadata.
 
     :param tax_id:
-    :param kwargs: data_type='basic'
+    :param data_type: `basic`, `all`. Default is `basic`.
     :return:
     """
     return request('call_taxon_data', tax_id=tax_id, **kwargs)
