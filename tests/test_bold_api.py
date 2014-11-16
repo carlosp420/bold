@@ -33,6 +33,10 @@ class TestApi(unittest.TestCase):
         self.assertEqual('Fabales', item['parent_name'])
         self.assertEqual('Fabaceae', item['taxon_rep'])
 
+        taxonomic_identification = 'Diplura'
+        res = bold.call_taxon_search(taxonomic_identification, fuzzy=False)
+        self.assertEqual(2, len(res.items))
+
     def test_call_taxon_data(self):
         tax_id = 302603
         # using default datatype='basic'
@@ -54,6 +58,12 @@ class TestApi(unittest.TestCase):
         item = res.items[0]
         self.assertEqual('Fabaceae', item['taxon'])
         self.assertEqual('Plants', item['tax_division'])
+
+        json_string = '{"images":[{"copyright_institution":"Smithsonian Tropical Research Institute","specimenid":2616716,"copyright":"Matthew J. MIller","imagequality":4,"photographer":"Oscar Lopez","image":"BSPBB\/MJM_7364_IMG_2240_d+1345758620.JPG","fieldnum":"MJM 7364","sampleid":"MJM 7364","mam_uri":null,"copyright_license":"CreativeCommons - Attribution Non-Commercial","meta":"Dorsal","copyright_holder":"Matthew J. MIller","catalognum":"","copyright_contact":"millerm@si.edu","copyright_year":"2012","taxonrep":"Momotus momota","aspectratio":1.608,"original":true,"external":null}]}'
+        res = api.Response()
+        res.parse_json(json_string)
+        item = res.items[0]
+        self.assertEqual('Oscar Lopez', item['images'][0]['photographer'])
 
     def tearDown(self):
         pass

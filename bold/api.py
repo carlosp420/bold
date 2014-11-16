@@ -1,5 +1,5 @@
 import json
-import logging
+import re
 import xml.etree.ElementTree as ET
 
 from Bio._py3k import Request as _Request
@@ -78,14 +78,24 @@ class Response(object):
         append = items_from_bold.append
         response = json.loads(result_string)
         if hasattr(response, 'items'):
-            if 'taxid' in response:
-                # this is a simple JSON and we got only one item
+            # Is this a simple JSON and we got only one item?
+            simple_json = False
+            for i in response.keys():
+                res = re.search('^[0-9]+', i)
+                if res is None:
+                    simple_json = True
+
+            if simple_json is True:
                 response = [response]
             for obj in response:
                 item = dict()
-                if 'taxid' not in obj:
-                    json_obj = response[obj]
-                else:
+                try:
+                    # TODO fix this bug
+                    if re.search('^[0-9]+$', obj) is True:
+                        json_obj = response[obj]
+                    else:
+                        json_obj = response[obj]
+                except TypeError:
                     json_obj = obj
 
                 for k, v in json_obj.items():
@@ -215,7 +225,7 @@ def call_taxon_data(tax_id, **kwargs):
     metadata.
 
     :param tax_id:
-    :param data_type: `basic`, `all`. Default is `basic`.
+    :param data_type: `basic`|`all`|`images`. Default is `basic`.
     :return:
     """
     return request('call_taxon_data', tax_id=tax_id, **kwargs)

@@ -98,7 +98,5 @@ the ``basic`` data_type::
     >>> item = res.items[0]
     >>> item['taxon']
     'Momotus'
-    >>> item['images']['image']
-    'BSPBB/MJM_7364_IMG_2240_d+1345758620.JPG'
-    >>> item['images']['photographer']
-    'Oscar Lopez'
+    >>> [(i['image'], i['photographer']) for i in item['images']]
+    [('BSPBB/MJM_7364_IMG_2240_d+1345758620.JPG', 'Oscar Lopez')]
