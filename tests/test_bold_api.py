@@ -45,25 +45,51 @@ class TestApi(unittest.TestCase):
         self.assertEqual(7044, item['parent_id'])
 
     def test_parse_json(self):
-        json_string = '{"302603":{"taxid":302603,"taxon":"Euptychia ordinata","tax_rank":"species","tax_division":"Animals","parentid":7044,"parentname":"Euptychia"}}'
         res = api.Response()
+
+        # call_taxon_search
+        json_string = '{"302603":{"taxid":302603,"taxon":"Euptychia ordinata","tax_rank":"species","tax_division":"Animals","parentid":7044,"parentname":"Euptychia"}}'
         res.parse_json(json_string)
         item = res.items[0]
         self.assertEqual(302603, item['tax_id'])
         self.assertEqual(7044, item['parent_id'])
 
+        # data_type = basic
         json_string = '{"taxid":891,"taxon":"Fabaceae","tax_rank":"family","tax_division":"Plants","parentid":187,"parentname":"Fabales","taxonrep":"Fabaceae"}'
-        res = api.Response()
         res.parse_json(json_string)
         item = res.items[0]
         self.assertEqual('Fabaceae', item['taxon'])
         self.assertEqual('Plants', item['tax_division'])
 
+        # data_type = images
         json_string = '{"images":[{"copyright_institution":"Smithsonian Tropical Research Institute","specimenid":2616716,"copyright":"Matthew J. MIller","imagequality":4,"photographer":"Oscar Lopez","image":"BSPBB\/MJM_7364_IMG_2240_d+1345758620.JPG","fieldnum":"MJM 7364","sampleid":"MJM 7364","mam_uri":null,"copyright_license":"CreativeCommons - Attribution Non-Commercial","meta":"Dorsal","copyright_holder":"Matthew J. MIller","catalognum":"","copyright_contact":"millerm@si.edu","copyright_year":"2012","taxonrep":"Momotus momota","aspectratio":1.608,"original":true,"external":null}]}'
-        res = api.Response()
         res.parse_json(json_string)
         item = res.items[0]
         self.assertEqual('Oscar Lopez', item['images'][0]['photographer'])
+
+        # data_type = geo
+        json_string = '{"country":{"Brazil":3,"Mexico":2,"Panama":10,"Guatemala":1,"Peru":13,"Bolivia":6,"Ecuador":2},"sitemap":"http:\/\/www.boldsystems.org\/index.php\/TaxBrowser_Maps_CollectionSites?taxid=88899"}'
+        res.parse_json(json_string)
+        item = res.items[0]
+        self.assertTrue('Brazil' in item['country'].keys())
+
+        # data_type = stats
+        json_string = '{"stats":{"publicspecies":2,"publicbins":3,"publicmarkersequences":{"COI-5P":6},"publicrecords":6,"specimenrecords":"45","sequencedspecimens":"25","barcodespecimens":"22","species":"3","barcodespecies":"3"}}'
+        res.parse_json(json_string)
+        item = res.items[0]
+        self.assertTrue('publicspecies' in item['stats'].keys())
+
+        # data_type = sequencinlabs
+        json_string = '{"sequencinglabs":{"Smithsonian Tropical Research Institute":7,"Biodiversity Institute of Ontario":13,"Universidade Federal de Minas Gerais":1,"Mined from GenBank":2,"Royal Ontario Museum":2}}'
+        res.parse_json(json_string)
+        item = res.items[0]
+        self.assertTrue('Royal Ontario Museum' in item['sequencinglabs'].keys())
+
+        # data_type = thirdparty
+        json_string = r'{"taxid": 88899, "taxon": "Momotus", "tax_rank": "genus", "tax_division": "Animals", "parentid": 88898, "parentname": "Momotidae", "wikipedia_summary": "Momotus</b></i> is a small genus of the motmots, a family of near passerine birds found in forest and woodland of the Neotropics. They have a colourful plumage, which is green on the back becoming blue on the flight feathers and the long tails. The barbs near the ends of the two longest central tail feathers fall off, leaving a length of bare shaft so that tails appear racket-shaped. \n\nMomotus</i> species, like other motmots, eat small prey such as insects and lizards, and will also take fruit. They nest in tunnels in banks, laying about four white eggs.", "wikipedia_link": "http://en.wikipedia.org/wiki/Momotus", "gbif_map": "http://data.gbif.org/species/2475289/overviewMap.png"}'
+        res.parse_json(json_string)
+        item = res.items[0]
+        self.assertTrue('wikipedia_summary' in item.keys())
 
     def tearDown(self):
         pass
