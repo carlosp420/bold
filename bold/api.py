@@ -187,12 +187,9 @@ class Request(object):
     """
     def get(self, service, **kwargs):
         """
+        Does HTTP request to BOLD webservice.
+
         :param service: the BOLD API alias to interact with.
-        :param seq: DNA sequence string or seq_record object.
-        :param db: the BOLD database of available records.
-                   Choices: ``COX1_SPECIES``, ``COX1``, ``COX1_SPECIES_PUBLIC``,
-                   ``COX1_L640bp``.
-        :param url: end-point for the API of the service of interest.
         """
         params = ''
 
@@ -240,7 +237,9 @@ def request(service, **kwargs):
     """Build our request. Also do checks for proper use of arguments.
 
     :param service: the BOLD API alias to interact with.
-    :return: Request object with correct URL."""
+    :return: Request object with correct URL:
+             end-point for the API of the service of interest.
+    """
     req = Request()
 
     if service == 'call_id':
@@ -265,8 +264,10 @@ def call_id(seq, db, **kwargs):
     """Call the ID Engine API
     http://www.boldsystems.org/index.php/resources/api?type=idengine
 
-    :param seq:
-    :param db:
+    :param seq: DNA sequence string or seq_record object.
+    :param db: the BOLD database of available records.
+               Choices: ``COX1_SPECIES``, ``COX1``, ``COX1_SPECIES_PUBLIC``,
+               ``COX1_L640bp``.
     :param kwargs:
     :return:
     """

@@ -5,7 +5,7 @@ from Bio._py3k import basestring
 def _prepare_sequence(seq_record):
     """Outputs a DNA sequence as string.
 
-    :param seq: Either sequence as string or sequence object
+    :param seq_record: Either sequence as string or sequence object
     :return: sequence as string
     """
     if isinstance(seq_record, basestring):
