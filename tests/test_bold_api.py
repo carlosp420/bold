@@ -50,6 +50,11 @@ class TestApi(unittest.TestCase):
         item = res.items[0]
         self.assertEqual(7044, item['parent_id'])
 
+        # not using parameter datatype='basic'
+        res = bold.call_taxon_data(tax_id)
+        item = res.items[0]
+        self.assertEqual(7044, item['parent_id'])
+
     def test_parse_json(self):
         res = api.Response()
 
