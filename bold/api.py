@@ -294,7 +294,7 @@ def call_taxon_data(tax_id, data_type):
     metadata.
 
     :param tax_id:
-    :param data_type: `basic`|`all`|`images`. Default is `basic`.
+    :param data_type: ``basic|all|images``. Default is ``basic``.
     :return:
     """
     return request('call_taxon_data', tax_id=tax_id, data_type=data_type)
@@ -304,7 +304,7 @@ def call_specimen_data(taxon):
     """Call the Specimen Data Retrieval API. Returns matching specimen data
     records.
 
-    :param taxon: `Aves|Reptilia`, `Bos taurus`
+    :param taxon: ``Aves|Reptilia``, ``Bos taurus``
     :return:
     """
     return request('call_specimen_data', taxon=taxon)
