@@ -46,7 +46,7 @@ class TestApi(unittest.TestCase):
     def test_call_taxon_data(self):
         tax_id = 302603
         # using default datatype='basic'
-        res = bold.call_taxon_data(tax_id)
+        res = bold.call_taxon_data(tax_id, data_type='basic')
         item = res.items[0]
         self.assertEqual(7044, item['parent_id'])
 

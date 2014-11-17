@@ -289,7 +289,7 @@ def call_taxon_search(taxonomic_identification, fuzzy=False):
                    )
 
 
-def call_taxon_data(tax_id, **kwargs):
+def call_taxon_data(tax_id, data_type):
     """Call the TaxonData API. It has several methods to get additional
     metadata.
 
@@ -297,7 +297,7 @@ def call_taxon_data(tax_id, **kwargs):
     :param data_type: `basic`|`all`|`images`. Default is `basic`.
     :return:
     """
-    return request('call_taxon_data', tax_id=tax_id, **kwargs)
+    return request('call_taxon_data', tax_id=tax_id, data_type=data_type)
 
 
 def call_specimen_data(taxon):
