@@ -30,6 +30,9 @@ class Response(object):
         :param result_string: XML or JSON string returned from BOLD
         :return: list of all items as dicts if service=call_id
         """
+        if result_string.strip() == '':
+            raise ValueError("BOLD did not return any result.")
+
         if service == 'call_id':
             items_from_bold = []
             append = items_from_bold.append
@@ -215,9 +218,12 @@ class Request(object):
             })
 
         if service == 'call_specimen_data':
-            params = _urlencode({
-                'taxon': kwargs['taxon'],
-            })
+            payload = dict()
+            for k, v in kwargs.items():
+                if v is not None and k != 'url':
+                    payload[k] = v
+
+            params = _urlencode(payload)
 
         url = kwargs['url'] + "?" + params
         req = _Request(url, headers={'User-Agent': 'BiopythonClient'})
@@ -298,11 +304,11 @@ def call_taxon_data(tax_id, data_type=None):
     return request('call_taxon_data', tax_id=tax_id, data_type=data_type)
 
 
-def call_specimen_data(taxon):
+def call_specimen_data(taxon=None, ids=None):
     """Call the Specimen Data Retrieval API. Returns matching specimen data
     records.
 
     :param taxon: ``Aves|Reptilia``, ``Bos taurus``
     :return:
     """
-    return request('call_specimen_data', taxon=taxon)
+    return request('call_specimen_data', taxon=taxon, ids=ids)
