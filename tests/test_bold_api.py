@@ -43,6 +43,12 @@ class TestApi(unittest.TestCase):
         item = res.items[0]
         self.assertEqual('Nymphalidae', item['taxonomy_family_taxon_name'])
 
+    def test_call_specimen_data_several_taxa(self):
+        taxon = 'Euptychia|Mycalesis'
+        res = bold.call_specimen_data(taxon)
+        item = res.items[0]
+        self.assertTrue('Mycalesis' in [item['taxonomy_genus_taxon_name'] for item in res.items])
+
     def test_call_taxon_data(self):
         tax_id = 302603
         # using default datatype='basic'
