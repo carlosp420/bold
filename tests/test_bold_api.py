@@ -46,8 +46,13 @@ class TestApi(unittest.TestCase):
     def test_call_specimen_data_several_taxa(self):
         taxon = 'Euptychia|Mycalesis'
         res = bold.call_specimen_data(taxon)
-        item = res.items[0]
         self.assertTrue('Mycalesis' in [item['taxonomy_genus_taxon_name'] for item in res.items])
+
+    def test_call_specimen_data_bin(self):
+        bin = 'BOLD:AAE2777'
+        res = bold.call_specimen_data(bin=bin)
+        item = res.items[0]
+        self.assertTrue('Jose Montero', item['taxonomy_identification_provided_by'])
 
     def test_call_taxon_data(self):
         tax_id = 302603

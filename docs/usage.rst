@@ -120,3 +120,9 @@ is equivalent do ``OR``.::
     >>> [i for i in item['specimen_imagery_media_image_file']]
     ['http://www.boldsystems.org/pics/MHMYM/11-SRNP-42276-DHJ543456+1331929372.jpg', 'http://www.boldsystems.org/pics/MHMYM/11-SRNP-42276-DHJ543457+1331929372.jpg']
 
+    >>> bin = 'BOLD:AAE2777'
+    >>> res = bold.call_specimen_data(bin=bin)
+    >>> item = res.items[0]
+    >>> item['taxonomy_identification_provided_by']
+    'Jose Montero'
+

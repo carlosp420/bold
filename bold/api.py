@@ -120,7 +120,7 @@ class Response(object):
                 append(item)
             self.items = items_from_bold
         else:
-            print("BOLD did not return results")
+            raise ValueError("BOLD did not return any result.")
 
     def parse_xml(self, result_string):
         items_from_bold = []
@@ -304,11 +304,11 @@ def call_taxon_data(tax_id, data_type=None):
     return request('call_taxon_data', tax_id=tax_id, data_type=data_type)
 
 
-def call_specimen_data(taxon=None, ids=None):
+def call_specimen_data(taxon=None, ids=None, bin=None):
     """Call the Specimen Data Retrieval API. Returns matching specimen data
     records.
 
     :param taxon: ``Aves|Reptilia``, ``Bos taurus``
     :return:
     """
-    return request('call_specimen_data', taxon=taxon, ids=ids)
+    return request('call_specimen_data', taxon=taxon, ids=ids, bin=bin)
