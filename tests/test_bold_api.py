@@ -68,6 +68,16 @@ class TestApi(unittest.TestCase):
                 append(item['taxonomy_identification_provided_by'])
         self.assertTrue('Jacques L. Pierre' in taxonomy_identifications)
 
+    def test_call_specimen_data_institutions(self):
+        institutions = 'University of Turku'
+        res = bold.call_specimen_data(institutions=institutions)
+        taxonomy_identifications = []
+        append = taxonomy_identifications.append
+        for item in res.items:
+            if 'taxonomy_identification_provided_by' in item:
+                append(item['taxonomy_identification_provided_by'])
+        self.assertTrue('Meri Lindqvist' in taxonomy_identifications)
+
     def test_call_taxon_data(self):
         tax_id = 302603
         # using default datatype='basic'

@@ -1,7 +1,9 @@
 import json
 import re
+import warnings
 import xml.etree.ElementTree as ET
 
+from Bio import BiopythonWarning
 from Bio._py3k import Request as _Request
 from Bio._py3k import urlopen as _urlopen
 from Bio._py3k import urlencode as _urlencode
@@ -258,6 +260,14 @@ def request(service, **kwargs):
 
     if service == 'call_specimen_data':
         url = "http://www.boldsystems.org/index.php/API_Public/specimen"
+        if kwargs['institutions'] is not None:
+            warnings.warn('Requesting ``institutions`` data from BOLD will '
+                          'possibly return a lot of records and the transfer '
+                          'of data might take a lot of time to complete as '
+                          'many Megabytes are expected.',
+                          BiopythonWarning
+                          )
+
         return req.get(service=service, url=url, **kwargs)
 
 
@@ -304,7 +314,8 @@ def call_taxon_data(tax_id, data_type=None):
     return request('call_taxon_data', tax_id=tax_id, data_type=data_type)
 
 
-def call_specimen_data(taxon=None, ids=None, bin=None, container=None):
+def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
+                       institutions=None):
     """Call the Specimen Data Retrieval API. Returns matching specimen data
     records.
 
@@ -312,4 +323,4 @@ def call_specimen_data(taxon=None, ids=None, bin=None, container=None):
     :return:
     """
     return request('call_specimen_data', taxon=taxon, ids=ids, bin=bin,
-                   container=container)
+                   container=container, institutions=institutions)
