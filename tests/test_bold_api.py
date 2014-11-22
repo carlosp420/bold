@@ -78,6 +78,26 @@ class TestApi(unittest.TestCase):
                 append(item['taxonomy_identification_provided_by'])
         self.assertTrue('Meri Lindqvist' in taxonomy_identifications)
 
+    def test_call_specimen_data_researchers(self):
+        researchers = 'Thibaud Decaens'
+        res = bold.call_specimen_data(researchers=researchers)
+        collection_event_countries = []
+        append = collection_event_countries.append
+        for item in res.items:
+            if 'collection_event_country' in item:
+                append(item['collection_event_country'])
+        self.assertTrue('Peru' in collection_event_countries)
+
+    def test_call_specimen_data_geo(self):
+        geo = 'Iceland'
+        res = bold.call_specimen_data(geo=geo)
+        collection_event_countries = []
+        append = collection_event_countries.append
+        for item in res.items:
+            if 'collection_event_country' in item:
+                append(item['collection_event_country'])
+        self.assertTrue('Iceland' in collection_event_countries)
+
     def test_call_taxon_data(self):
         tax_id = 302603
         # using default datatype='basic'

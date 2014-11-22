@@ -260,13 +260,16 @@ def request(service, **kwargs):
 
     if service == 'call_specimen_data':
         url = "http://www.boldsystems.org/index.php/API_Public/specimen"
-        if kwargs['institutions'] is not None:
-            warnings.warn('Requesting ``institutions`` data from BOLD will '
-                          'possibly return a lot of records and the transfer '
-                          'of data might take a lot of time to complete as '
-                          'many Megabytes are expected.',
-                          BiopythonWarning
-                          )
+
+        args_returning_lots_of_data = ['institutions', 'researchers', 'geo']
+        for arg in args_returning_lots_of_data:
+            if kwargs[arg] is not None:
+                warnings.warn('Requesting ``' + arg + '`` data from BOLD will '
+                              'possibly return a lot of records and the transfer '
+                              'of data might take a lot of time to complete as '
+                              'many Megabytes are expected.',
+                              BiopythonWarning
+                              )
 
         return req.get(service=service, url=url, **kwargs)
 
@@ -315,7 +318,8 @@ def call_taxon_data(tax_id, data_type=None):
 
 
 def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
-                       institutions=None):
+                       institutions=None, researchers=None, geo=None,
+                       format=None):
     """Call the Specimen Data Retrieval API. Returns matching specimen data
     records.
 
@@ -323,4 +327,6 @@ def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
     :return:
     """
     return request('call_specimen_data', taxon=taxon, ids=ids, bin=bin,
-                   container=container, institutions=institutions)
+                   container=container, institutions=institutions,
+                   researchers=researchers, geo=geo, format=format
+                   )
