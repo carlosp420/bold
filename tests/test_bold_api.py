@@ -37,6 +37,10 @@ class TestApi(unittest.TestCase):
         res = bold.call_taxon_search(taxonomic_identification, fuzzy=False)
         self.assertEqual(2, len(res.items))
 
+    def test_call_taxon_search_returns_empty(self):
+        taxonomic_identification = 'Fake species name'
+        self.assertRaises(ValueError, bold.call_taxon_search, taxonomic_identification, fuzzy=False)
+
     def test_call_specimen_data(self):
         taxon = 'Euptychia'
         res = bold.call_specimen_data(taxon)
@@ -97,6 +101,19 @@ class TestApi(unittest.TestCase):
             if 'collection_event_country' in item:
                 append(item['collection_event_country'])
         self.assertTrue('Iceland' in collection_event_countries)
+
+    def test_call_specimen_data_format_tsv(self):
+        geo = 'Iceland'
+        res = bold.call_specimen_data(geo=geo, format='tsv')
+        self.assertTrue('Iceland' in res.items)
+
+    def test_call_specimen_data_wrong_format(self):
+        geo = 'Iceland'
+        self.assertRaises(ValueError, bold.call_specimen_data, geo=geo, format='csv')
+
+    def test_call_specimen_data_return_empty(self):
+        geo = 'Fake country name'
+        self.assertRaises(ValueError, bold.call_specimen_data, geo=geo)
 
     def test_call_taxon_data(self):
         tax_id = 302603

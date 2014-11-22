@@ -79,7 +79,11 @@ class Response(object):
             self.parse_json(result_string)
 
         if service == 'call_specimen_data':
-            self.parse_xml(result_string)
+            # result_string could be data as tab-separated values (tsv)
+            try:
+                self.parse_xml(result_string)
+            except ET.ParseError:
+                self.items = result_string
 
     def parse_json(self, result_string):
         items_from_bold = []
@@ -324,8 +328,14 @@ def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
     records.
 
     :param taxon: ``Aves|Reptilia``, ``Bos taurus``
+    :param format: Optional: ``format='tsv'`` will return results a string
+                   containing data in tab-separated values. If not used, the
+                   data will be returned as dictionary (default behaviour).
     :return:
     """
+    if format is not None and format != 'tsv':
+        raise ValueError('Invalid value for ``format``')
+
     return request('call_specimen_data', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,
                    researchers=researchers, geo=geo, format=format

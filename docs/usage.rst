@@ -126,3 +126,14 @@ is equivalent do ``OR``.::
     >>> item['taxonomy_identification_provided_by']
     'Jose Montero'
 
+By default, ``bold.call_specimen_data`` will return items as dictionary
+objects. However, it is also possible to get data from BOLD as tab-separated
+values that can be opened in MS Excel-like software.::
+
+    >>> res = bold.call_specimen_data(geo='Iceland', format='tsv')
+    >>> with open("output_file.csv", "w") as handle:
+    ...     handle.write(res.items)
+    185584
+
+
+
