@@ -1,6 +1,8 @@
 import json
 import re
+import sys
 import warnings
+import xml
 import xml.etree.ElementTree as ET
 
 from Bio import BiopythonWarning
@@ -79,11 +81,18 @@ class Response(object):
             self.parse_json(result_string)
 
         if service == 'call_specimen_data':
-            # result_string could be data as tab-separated values (tsv)
-            try:
-                self.parse_xml(result_string)
-            except ET.ParseError:
-                self.items = result_string
+            # Result_string could be data as tab-separated values (tsv)
+            # ugly hack for python 2.6 that does not have ET.ParseError
+            if sys.version.startswith('2.6'):
+                try:
+                    self.parse_xml(result_string)
+                except xml.parsers.expat.ExpatError:
+                    self.items = result_string
+            else:
+                try:
+                    self.parse_xml(result_string)
+                except ET.ParseError:
+                    self.items = result_string
 
     def parse_json(self, result_string):
         items_from_bold = []
