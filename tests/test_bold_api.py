@@ -127,6 +127,11 @@ class TestApi(unittest.TestCase):
         item = res.items[0]
         self.assertEqual(7044, item['parent_id'])
 
+    def test_call_sequence_data(self):
+        taxon = 'Euptychia|Splendeuptychia'
+        res = bold.call_sequence_data(taxon=taxon)
+        self.assertEqual("ValueError", res.items)
+
     def test_parse_json(self):
         res = api.Response()
 

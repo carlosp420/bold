@@ -94,6 +94,9 @@ class Response(object):
                 except ET.ParseError:
                     self.items = result_string
 
+        if service == 'call_sequence_data':
+            self.parse_fasta(result_string)
+
     def parse_json(self, result_string):
         items_from_bold = []
         append = items_from_bold.append
@@ -198,6 +201,9 @@ class Response(object):
             append(item)
         self.items = items_from_bold
 
+    def parse_fasta(self, result_string):
+        pass
+
 
 class Request(object):
     """Constructs a :class:`Request <Request>`. Sends it and returns a
@@ -237,7 +243,13 @@ class Request(object):
             for k, v in kwargs.items():
                 if v is not None and k != 'url':
                     payload[k] = v
+            params = _urlencode(payload)
 
+        if service == 'call_sequence_data':
+            payload = dict()
+            for k, v in kwargs.items():
+                if v is not None and k != 'url':
+                    payload[k] = v
             params = _urlencode(payload)
 
         url = kwargs['url'] + "?" + params
@@ -272,7 +284,7 @@ def request(service, **kwargs):
         return req.get(service=service, url=url, **kwargs)
 
     if service == 'call_specimen_data':
-        url = "http://www.boldsystems.org/index.php/API_Public/specimen"
+        url = "http://www.boldsystems.org/index.php/API_Public/sequence"
 
         args_returning_lots_of_data = ['institutions', 'researchers', 'geo']
         for arg in args_returning_lots_of_data:
@@ -281,6 +293,21 @@ def request(service, **kwargs):
                               'possibly return a lot of records and the transfer '
                               'of data might take a lot of time to complete as '
                               'many Megabytes are expected.',
+                              BiopythonWarning
+                              )
+
+        return req.get(service=service, url=url, **kwargs)
+
+    if service == 'call_sequence_data':
+        url = "http://www.boldsystems.org/index.php/API_Public/sequence"
+
+        args_returning_lots_of_data = ['institutions', 'researchers', 'geo']
+        for arg in args_returning_lots_of_data:
+            if kwargs[arg] is not None:
+                warnings.warn('Requesting ``' + arg + '`` data from BOLD will '
+                                                      'possibly return a lot of records and the transfer '
+                                                      'of data might take a lot of time to complete as '
+                                                      'many Megabytes are expected.',
                               BiopythonWarning
                               )
 
@@ -348,4 +375,19 @@ def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
     return request('call_specimen_data', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,
                    researchers=researchers, geo=geo, format=format
+                   )
+
+
+def call_sequence_data(taxon=None, ids=None, bin=None, container=None,
+                       institutions=None, researchers=None, geo=None,
+                       marker=None):
+    """Call the Specimen Data Retrieval API. Returns matching specimen data
+    records.
+
+    :param taxon: ``Aves|Reptilia``, ``Bos taurus``
+    :return: Seq objects
+    """
+    return request('call_specimen_data', taxon=taxon, ids=ids, bin=bin,
+                   container=container, institutions=institutions,
+                   researchers=researchers, geo=geo, marker=marker
                    )

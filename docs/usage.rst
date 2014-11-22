@@ -135,5 +135,18 @@ values that can be opened in MS Excel-like software.::
     ...     handle.write(res.items)
     185584
 
+Sequence data retrieval
+-----------------------
+API calls to retrieve DNA sequences for records using a combination of
+parameters.
+See here for more info http://www.boldsystems.org/index.php/resources/api?type=webservices
+Bio.bold returns the data as Seq objects.
 
+Parameters can accept more than one value by using the pipe symbol ``|``, which
+is equivalent do ``OR``.::
+
+    >>> res = bold.call_sequence_data(taxon='Euptychia|Splendeuptychia')
+    >>> item = res.items[0]
+    >>> item['taxonomy_family_taxon_name']
+    'Nymphalidae'
 
