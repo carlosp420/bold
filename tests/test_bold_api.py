@@ -108,6 +108,11 @@ class TestApi(unittest.TestCase):
         item = res.items[0]
         self.assertTrue('wikipedia_summary' in item.keys())
 
+    def test_parse_data_empty(self):
+        result_string = ''
+        response = api.Response()
+        self.assertRaises(ValueError, response.parse_data, 'call_id', result_string)
+
     def tearDown(self):
         pass
 

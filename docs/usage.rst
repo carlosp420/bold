@@ -110,8 +110,13 @@ See here for more info http://www.boldsystems.org/index.php/resources/api?type=w
 Parameters can accept more than one value by using the pipe symbol ``|``, which
 is equivalent do ``OR``.::
 
-    >>> taxon = 'Euptychia'
-    >>> res = bold.call_specimen_data(taxon)
+    >>> res = bold.call_specimen_data(taxon='Euptychia|Splendeuptychia')
     >>> item = res.items[0]
     >>> item['taxonomy_family_taxon_name']
     'Nymphalidae'
+
+    >>> res = bold.call_specimen_data(ids='11-SRNP-42276')
+    >>> item = res.items[0]
+    >>> [i for i in item['specimen_imagery_media_image_file']]
+    ['http://www.boldsystems.org/pics/MHMYM/11-SRNP-42276-DHJ543456+1331929372.jpg', 'http://www.boldsystems.org/pics/MHMYM/11-SRNP-42276-DHJ543457+1331929372.jpg']
+
