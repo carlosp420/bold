@@ -51,8 +51,22 @@ class TestApi(unittest.TestCase):
     def test_call_specimen_data_bin(self):
         bin = 'BOLD:AAE2777'
         res = bold.call_specimen_data(bin=bin)
-        item = res.items[0]
-        self.assertTrue('Jose Montero', item['taxonomy_identification_provided_by'])
+        taxonomy_identifications = []
+        append = taxonomy_identifications.append
+        for item in res.items:
+            if 'taxonomy_identification_provided_by' in item:
+                append(item['taxonomy_identification_provided_by'])
+        self.assertTrue('Jose Montero' in taxonomy_identifications)
+
+    def test_call_specimen_data_container(self):
+        container = 'ACRJP'
+        res = bold.call_specimen_data(container=container)
+        taxonomy_identifications = []
+        append = taxonomy_identifications.append
+        for item in res.items:
+            if 'taxonomy_identification_provided_by' in item:
+                append(item['taxonomy_identification_provided_by'])
+        self.assertTrue('Jacques L. Pierre' in taxonomy_identifications)
 
     def test_call_taxon_data(self):
         tax_id = 302603

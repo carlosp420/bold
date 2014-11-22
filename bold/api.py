@@ -304,11 +304,12 @@ def call_taxon_data(tax_id, data_type=None):
     return request('call_taxon_data', tax_id=tax_id, data_type=data_type)
 
 
-def call_specimen_data(taxon=None, ids=None, bin=None):
+def call_specimen_data(taxon=None, ids=None, bin=None, container=None):
     """Call the Specimen Data Retrieval API. Returns matching specimen data
     records.
 
     :param taxon: ``Aves|Reptilia``, ``Bos taurus``
     :return:
     """
-    return request('call_specimen_data', taxon=taxon, ids=ids, bin=bin)
+    return request('call_specimen_data', taxon=taxon, ids=ids, bin=bin,
+                   container=container)
