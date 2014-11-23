@@ -135,6 +135,11 @@ class TestApi(unittest.TestCase):
         seq_record_ids = [item.id for item in items]
         self.assertTrue('GBLN4477-14|Hermeuptychia' in seq_record_ids)
 
+    def test_call_sequence_data_returns_empty(self):
+        taxon = 'Fake taxon'
+        geo = 'Fake country'
+        self.assertRaises(ValueError, bold.call_sequence_data, taxon, geo)
+
     def test_parse_json(self):
         res = api.Response()
 
