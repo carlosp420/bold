@@ -292,7 +292,7 @@ def request(service, **kwargs):
         return req.get(service=service, url=url, **kwargs)
 
     if service == 'call_specimen_data':
-        url = "http://www.boldsystems.org/index.php/API_Public/sequence"
+        url = "http://www.boldsystems.org/index.php/API_Public/specimen"
 
         args_returning_lots_of_data = ['institutions', 'researchers', 'geo']
         for arg in args_returning_lots_of_data:
