@@ -1,11 +1,14 @@
 import json
+import os
 import re
+from random import randint
 import sys
 import warnings
 import xml
 import xml.etree.ElementTree as ET
 
 from Bio import BiopythonWarning
+from Bio import SeqIO
 from Bio._py3k import Request as _Request
 from Bio._py3k import urlopen as _urlopen
 from Bio._py3k import urlencode as _urlencode
@@ -202,7 +205,12 @@ class Response(object):
         self.items = items_from_bold
 
     def parse_fasta(self, result_string):
-        pass
+        filename = "tmp_" + str(randint(1, 1000000)) + ".fas"
+        with open(filename, "w") as handle:
+            handle.write(result_string)
+        generator = SeqIO.parse(filename, "fasta")
+        self.items = [i for i in generator]
+        os.remove(filename)
 
 
 class Request(object):
@@ -381,13 +389,13 @@ def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
 def call_sequence_data(taxon=None, ids=None, bin=None, container=None,
                        institutions=None, researchers=None, geo=None,
                        marker=None):
-    """Call the Specimen Data Retrieval API. Returns matching specimen data
-    records.
+    """Call the Specimen Data Retrieval API. Returns DNA sequences in FASTA
+    format for matching records.
 
     :param taxon: ``Aves|Reptilia``, ``Bos taurus``
     :return: Seq objects
     """
-    return request('call_specimen_data', taxon=taxon, ids=ids, bin=bin,
+    return request('call_sequence_data', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,
                    researchers=researchers, geo=geo, marker=marker
                    )

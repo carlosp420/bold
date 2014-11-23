@@ -140,13 +140,15 @@ Sequence data retrieval
 API calls to retrieve DNA sequences for records using a combination of
 parameters.
 See here for more info http://www.boldsystems.org/index.php/resources/api?type=webservices
-Bio.bold returns the data as Seq objects.
+Bio.bold returns the data as a list of SeqRecord objects.
 
 Parameters can accept more than one value by using the pipe symbol ``|``, which
 is equivalent do ``OR``.::
 
-    >>> res = bold.call_sequence_data(taxon='Euptychia|Splendeuptychia')
-    >>> item = res.items[0]
-    >>> item['taxonomy_family_taxon_name']
-    'Nymphalidae'
+    >>> res = bold.call_sequence_data(taxon='Hermeuptychia', geo='Peru')
+    >>> items = res.items
+    >>> [item.id for item in items]
+    ['GBLN4477-14|Hermeuptychia', 'GBLN4478-14|Hermeuptychia', 'GBLN4479-14|Hermeuptychia']
+
+
 
