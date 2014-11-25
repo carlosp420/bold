@@ -83,7 +83,7 @@ class Response(object):
         if service == 'call_taxon_data':
             self.parse_json(result_string)
 
-        if service == 'call_specimen_data':
+        if service == 'call_specimen_data' or service == 'call_full_data':
             # Result_string could be data as tab-separated values (tsv)
             # ugly hack for python 2.6 that does not have ET.ParseError
             if sys.version.startswith('2.6'):
@@ -260,6 +260,13 @@ class Request(object):
                     payload[k] = v
             params = _urlencode(payload)
 
+        if service == 'call_full_data':
+            payload = dict()
+            for k, v in kwargs.items():
+                if v is not None and k != 'url':
+                    payload[k] = v
+            params = _urlencode(payload)
+
         url = kwargs['url'] + "?" + params
         req = _Request(url, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
@@ -303,23 +310,23 @@ def request(service, **kwargs):
                               'many Megabytes are expected.',
                               BiopythonWarning
                               )
-
         return req.get(service=service, url=url, **kwargs)
 
     if service == 'call_sequence_data':
         url = "http://www.boldsystems.org/index.php/API_Public/sequence"
+    elif service == 'call_full_data':
+        url = "http://www.boldsystems.org/index.php/API_Public/combined"
 
-        args_returning_lots_of_data = ['institutions', 'researchers', 'geo']
-        for arg in args_returning_lots_of_data:
-            if kwargs[arg] is not None:
-                warnings.warn('Requesting ``' + arg + '`` data from BOLD will '
-                                                      'possibly return a lot of records and the transfer '
-                                                      'of data might take a lot of time to complete as '
-                                                      'many Megabytes are expected.',
-                              BiopythonWarning
-                              )
-
-        return req.get(service=service, url=url, **kwargs)
+    args_returning_lots_of_data = ['institutions', 'researchers', 'geo']
+    for arg in args_returning_lots_of_data:
+        if kwargs[arg] is not None:
+            warnings.warn('Requesting ``' + arg + '`` data from BOLD will '
+                                                  'possibly return a lot of records and the transfer '
+                                                  'of data might take a lot of time to complete as '
+                                                  'many Megabytes are expected.',
+                          BiopythonWarning
+                          )
+    return req.get(service=service, url=url, **kwargs)
 
 
 def call_id(seq, db, **kwargs):
@@ -398,4 +405,22 @@ def call_sequence_data(taxon=None, ids=None, bin=None, container=None,
     return request('call_sequence_data', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,
                    researchers=researchers, geo=geo, marker=marker
+                   )
+
+
+def call_full_data(taxon=None, ids=None, bin=None, container=None,
+                   institutions=None, researchers=None, geo=None,
+                   marker=None, format=None):
+    """Call the Full Data Retrieval API (combined). Returns data as TSV format
+    or list of dicts parsed from a XML file.
+
+    :param taxon: ``Aves|Reptilia``, ``Bos taurus``
+    :return: Seq objects
+    """
+    if format is not None and format != 'tsv':
+        raise ValueError('Invalid value for ``format``')
+
+    return request('call_full_data', taxon=taxon, ids=ids, bin=bin,
+                   container=container, institutions=institutions,
+                   researchers=researchers, geo=geo, marker=marker, fomat=format
                    )

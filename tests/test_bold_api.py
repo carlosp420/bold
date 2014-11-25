@@ -143,6 +143,13 @@ class TestApi(unittest.TestCase):
         geo = 'Fake country'
         self.assertRaises(ValueError, bold.call_sequence_data, taxon, geo)
 
+    def test_call_full_data(self):
+        taxon = 'Chordata'
+        geo = 'Florida'
+        res = bold.call_full_data(taxon=taxon, geo=geo)
+        items = res.items
+        self.assertEqual('', items)
+
     def test_parse_json(self):
         res = api.Response()
 

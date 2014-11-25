@@ -151,4 +151,13 @@ is equivalent do ``OR``.::
     ['GBLN4477-14|Hermeuptychia', 'GBLN4478-14|Hermeuptychia', 'GBLN4479-14|Hermeuptychia']
 
 
+Full Data Retrieval (Specimen + Sequence)
+-----------------------------------------
+Retrieves TSV file or item objects of data from voucher, taxonomic, specimen,
+collection data and sequence for each record.
+BOLD does not support the FASTA format for this API call.::
 
+    >>> res = bold.call_full_data(taxon='Hermeuptychia', geo='Peru')
+    >>> item = res.items[0]
+    >>> item
+    'hola'
