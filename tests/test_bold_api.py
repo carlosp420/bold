@@ -144,11 +144,16 @@ class TestApi(unittest.TestCase):
         self.assertRaises(ValueError, bold.call_sequence_data, taxon, geo)
 
     def test_call_full_data(self):
-        taxon = 'Chordata'
-        geo = 'Florida'
+        taxon = 'Hermeuptychia'
+        geo = 'Peru'
         res = bold.call_full_data(taxon=taxon, geo=geo)
-        items = res.items
-        self.assertEqual('', items)
+        genbank_accession_numbers = [item['specimen_identifiers_sampleid'] for item in res.items]
+        self.assertTrue('KF466142' in genbank_accession_numbers)
+
+    def test_call_full_data_invalid(self):
+        geo = 'Peru'
+        format = 'csv'
+        self.assertRaises(ValueError, bold.call_full_data, geo=geo, format=format)
 
     def test_parse_json(self):
         res = api.Response()

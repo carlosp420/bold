@@ -151,8 +151,12 @@ class Response(object):
         for match in root.findall('record'):
             item = dict()
             fields = [
-                'record_id', 'processid', 'bin_uri',
-                'specimen_identifiers/sampleid', 'specimen_identifiers/fieldnum',
+                'record_id',
+                'processid',
+                'bin_uri',
+                'specimen_identifiers/sampleid',
+                'specimen_identifiers/catalognum',
+                'specimen_identifiers/fieldnum',
                 'specimen_identifiers/institution_storing',
                 'taxonomy/identification_provided_by',
                 'taxonomy/phylum/taxon/taxID',
@@ -172,6 +176,7 @@ class Response(object):
                 'specimen_details/extrainfo',
                 'specimen_details/lifestage',
                 'collection_event/collector',
+                'collection_event/collectors',
                 'collection_event/collectiondate',
                 'collection_event/coordinates/lat',
                 'collection_event/coordinates/long',
@@ -190,6 +195,10 @@ class Response(object):
                 'tracefiles/read/seq_primer',
                 'tracefiles/read/trace_link',
                 'tracefiles/read/markercode',
+                'sequences/sequence/sequenceID',
+                'sequences/sequence/markercode',
+                'sequences/sequence/genbank_accession',
+                'sequences/sequence/nucleotides',
             ]
             for field in fields:
                 if match.find(field) is not None:

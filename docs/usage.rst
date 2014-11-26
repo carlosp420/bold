@@ -122,9 +122,45 @@ is equivalent do ``OR``.::
 
     >>> bin = 'BOLD:AAE2777'
     >>> res = bold.call_specimen_data(bin=bin)
+    >>> class_taxon_names = [item['taxonomy_class_taxon_name'] for item in res.items]
+    >>> class_taxon_names[0]
+    'Insecta'
+
+By default, ``bold.call_specimen_data`` will return items as dictionary
+objects. However, it is also possible to get data from BOLD as tab-separated
+values that can be opened in MS Excel-like software.::
+
+    >>> res = bold.call_specimen_data(geo='Iceland', format='tsv')
+    >>> with open("output_file.csv", "w") as handle:
+    ...     handle.write(res.items)
+    185584
+
+Sequence data retrieval
+-----------------------
+API calls to retrieve DNA sequences for records using a combination of
+parameters.
+See here for more info http://www.boldsystems.org/index.php/resources/api?type=webservices
+Bio.bold returns the data as a list of SeqRecord objects.
+
+Parameters can accept more than one value by using the pipe symbol ``|``, which
+is equivalent do ``OR``.::
+
+    >>> res = bold.call_sequence_data(taxon='Hermeuptychia', geo='Peru')
+    >>> items = res.items
+    >>> [item.id for item in items]
+    ['GBLN4477-14|Hermeuptychia', 'GBLN4478-14|Hermeuptychia', 'GBLN4479-14|Hermeuptychia']
+
+
+Full Data Retrieval (Specimen + Sequence)
+-----------------------------------------
+Retrieves TSV file or item objects of data from voucher, taxonomic, specimen,
+collection data and sequence for each record.
+BOLD does not support the FASTA format for this API call.::
+
+    >>> res = bold.call_full_data(taxon='Hermeuptychia', geo='Peru')
     >>> item = res.items[0]
-    >>> item['taxonomy_identification_provided_by']
-    'Jose Montero'
+    >>> [item['sequences_sequence_genbank_accession'] for item in res.items]
+    ['KF466142', 'KF466143', 'KF466144']
 
 By default, ``bold.call_specimen_data`` will return items as dictionary
 objects. However, it is also possible to get data from BOLD as tab-separated
