@@ -122,9 +122,9 @@ is equivalent do ``OR``.::
 
     >>> bin = 'BOLD:AAE2777'
     >>> res = bold.call_specimen_data(bin=bin)
-    >>> item = res.items[0]
-    >>> item['taxonomy_identification_provided_by']
-    'Jose Montero'
+    >>> class_taxon_names = [item['taxonomy_class_taxon_name'] for item in res.items]
+    >>> class_taxon_names[0]
+    'Insecta'
 
 By default, ``bold.call_specimen_data`` will return items as dictionary
 objects. However, it is also possible to get data from BOLD as tab-separated
@@ -159,5 +159,6 @@ BOLD does not support the FASTA format for this API call.::
 
     >>> res = bold.call_full_data(taxon='Hermeuptychia', geo='Peru')
     >>> item = res.items[0]
-    >>> item
-    'hola'
+    >>> [item['sequences_sequence_genbank_accession'] for item in res.items]
+    ['KF466142', 'KF466143', 'KF466144']
+
