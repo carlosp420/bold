@@ -100,6 +100,10 @@ class Response(object):
         if service == 'call_sequence_data':
             self.parse_fasta(result_string)
 
+    def download_file(self, req):
+        handle = StringIO.StringIO()
+        handle.write(req)
+
     def parse_json(self, result_string):
         items_from_bold = []
         append = items_from_bold.append
@@ -276,12 +280,23 @@ class Request(object):
                     payload[k] = v
             params = _urlencode(payload)
 
+        if service == 'call_trace_files':
+            payload = dict()
+            for k, v in kwargs.items():
+                if v is not None and k != 'url':
+                    payload[k] = v
+            params = _urlencode(payload)
+
         url = kwargs['url'] + "?" + params
         req = _Request(url, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
         result = _as_string(handle.read())
         response = Response()
-        response.parse_data(service, result)
+        if 'service' == 'call_trace_files':
+            req = urllib2.urlopen(url)
+            response.download_file(req.read())
+        else:
+            response.parse_data(service, result)
         return response
 
 
@@ -305,6 +320,20 @@ def request(service, **kwargs):
 
     if service == 'call_taxon_data':
         url = "http://www.boldsystems.org/index.php/API_Tax/TaxonData"
+        return req.get(service=service, url=url, **kwargs)
+
+    if service == 'call_trace_files':
+        url = "http://www.boldsystems.org/index.php/API_Public/trace"
+
+        args_returning_lots_of_data = ['institutions', 'researchers', 'geo']
+        for arg in args_returning_lots_of_data:
+            if kwargs[arg] is not None:
+                warnings.warn('Requesting ``' + arg + '`` data from BOLD will '
+                                                      'possibly return a lot of records and the transfer '
+                                                      'of data might take a lot of time to complete as '
+                                                      'many Megabytes are expected.',
+                              BiopythonWarning
+                              )
         return req.get(service=service, url=url, **kwargs)
 
     if service == 'call_specimen_data':
@@ -432,4 +461,28 @@ def call_full_data(taxon=None, ids=None, bin=None, container=None,
     return request('call_full_data', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,
                    researchers=researchers, geo=geo, marker=marker, format=format
+                   )
+
+
+def call_trace_files(taxon=None, ids=None, bin=None, container=None,
+                     institutions=None, researchers=None, geo=None,
+                     marker=None):
+    """
+    Trace files can be retrieved from BOLD by querying with several parameters.
+
+    :param taxon:
+    :param ids:
+    :param bin:
+    :param container:
+    :param institutions:
+    :param researchers:
+    :param geo:
+    :param marker:
+    :return: a TAR file consisting of compressed Trace Files (traces in either
+             .ab1 or .scf format) along with a file listing the Process ID, taxon and
+             marker for each Trace File included.
+    """
+    return request('call_trace_files', taxon=taxon, ids=ids, bin=bin,
+                   container=container, institutions=institutions,
+                   researchers=researchers, geo=geo, marker=marker
                    )

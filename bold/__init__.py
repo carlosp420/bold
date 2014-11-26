@@ -12,6 +12,7 @@ from .api import call_taxon_data
 from .api import call_specimen_data
 from .api import call_sequence_data
 from .api import call_full_data
+from .api import call_trace_files
 
 
 logging.basicConfig(format='[bold module]:%(levelname)s:%(message)s', level=logging.DEBUG)
