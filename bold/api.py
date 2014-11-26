@@ -431,5 +431,5 @@ def call_full_data(taxon=None, ids=None, bin=None, container=None,
 
     return request('call_full_data', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,
-                   researchers=researchers, geo=geo, marker=marker, fomat=format
+                   researchers=researchers, geo=geo, marker=marker, format=format
                    )
