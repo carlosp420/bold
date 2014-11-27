@@ -155,6 +155,13 @@ class TestApi(unittest.TestCase):
         format = 'csv'
         self.assertRaises(ValueError, bold.call_full_data, geo=geo, format=format)
 
+    def test_call_trace_files(self):
+        taxon = 'Euptychia mollis'
+        institutions = 'York University'
+        res = bold.call_trace_files(taxon=taxon,
+                                    institutions=institutions)
+        self.assertIsNotNone(res.file_contents)
+
     def test_parse_json(self):
         res = api.Response()
 
