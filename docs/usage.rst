@@ -168,6 +168,11 @@ Trace File Data Retrieval
 Trace files can be retrieved from BOLD by querying with several parameters.
 Returns a TAR file consisting of compressed Trace Files (traces in either
 .ab1 or .scf format) along with a file listing the Process ID, taxon and
-marker for each Trace File included::
+marker for each Trace File included.
+This call will return the file contents ready to be written to a file.::
 
-    >>> res = bold.call_trace_files(taxon='Hermeuptychia', geo='Peru')
+    >>> res = bold.call_trace_files(taxon='Euptychia mollis',
+    ...                             institutions='York University')
+    >>> with open("trace_files.tar", "wb") as handle:
+    ...     handle.write(res.file_contents)
+    4106240
