@@ -160,7 +160,7 @@ class TestApi(unittest.TestCase):
         institutions = 'York University'
         res = bold.call_trace_files(taxon=taxon,
                                     institutions=institutions)
-        self.assertIsNotNone(res.file_contents)
+        self.assertNotEqual(res.file_contents, None)
 
     def test_parse_json(self):
         res = api.Response()
