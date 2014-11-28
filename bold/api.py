@@ -69,10 +69,10 @@ class Response(object):
             self.items = items_from_bold
 
         if service == 'call_taxon_search':
-            self.parse_json(result_string)
+            self._parse_json(result_string)
 
         if service == 'call_taxon_data':
-            self.parse_json(result_string)
+            self._parse_json(result_string)
 
         if service == 'call_specimen_data' or service == 'call_full_data':
             # Result_string could be data as tab-separated values (tsv)
@@ -95,7 +95,7 @@ class Response(object):
             # file_contents is in binary form
             self.file_contents = result_string
 
-    def parse_json(self, result_string):
+    def _parse_json(self, result_string):
         items_from_bold = []
         append = items_from_bold.append
         response = json.loads(result_string)
