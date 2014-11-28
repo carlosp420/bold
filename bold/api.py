@@ -13,6 +13,7 @@ from Bio._py3k import Request as _Request
 from Bio._py3k import urlopen as _urlopen
 from Bio._py3k import urlencode as _urlencode
 from Bio._py3k import _as_string
+from Bio._py3k import StringIO
 
 from . import utils
 
@@ -30,6 +31,7 @@ class Response(object):
         self.parent_id = ''
         self.parent_name = ''
         self.taxon_rep = ''
+        self.file_contents = ''
 
     def parse_data(self, service, result_string):
         """Parses XML response from BOLD.
@@ -100,9 +102,9 @@ class Response(object):
         if service == 'call_sequence_data':
             self.parse_fasta(result_string)
 
-    def download_file(self, req):
-        handle = StringIO.StringIO()
-        handle.write(req)
+        if service == 'call_trace_files':
+            # file_contents is in binary form
+            self.file_contents = result_string
 
     def parse_json(self, result_string):
         items_from_bold = []
@@ -290,12 +292,12 @@ class Request(object):
         url = kwargs['url'] + "?" + params
         req = _Request(url, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
-        result = _as_string(handle.read())
         response = Response()
-        if 'service' == 'call_trace_files':
-            req = urllib2.urlopen(url)
-            response.download_file(req.read())
+        if service == 'call_trace_files':
+            binary_result = handle.read()
+            response.parse_data(service, binary_result)
         else:
+            result = _as_string(handle.read())
             response.parse_data(service, result)
         return response
 
