@@ -89,7 +89,7 @@ class Response(object):
                     self.items = result_string
 
         if service == 'call_sequence_data':
-            self.parse_fasta(result_string)
+            self._parse_fasta(result_string)
 
         if service == 'call_trace_files':
             # file_contents is in binary form
@@ -208,7 +208,7 @@ class Response(object):
             append(item)
         self.items = items_from_bold
 
-    def parse_fasta(self, result_string):
+    def _parse_fasta(self, result_string):
         filename = "tmp_" + str(randint(1, 1000000)) + ".fas"
         with open(filename, "w") as handle:
             handle.write(result_string)
