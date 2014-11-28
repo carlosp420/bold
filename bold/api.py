@@ -79,12 +79,12 @@ class Response(object):
             # ugly hack for python 2.6 that does not have ET.ParseError
             if sys.version.startswith('2.6'):
                 try:
-                    self.parse_xml(result_string)
+                    self._parse_xml(result_string)
                 except xml.parsers.expat.ExpatError:
                     self.items = result_string
             else:
                 try:
-                    self.parse_xml(result_string)
+                    self._parse_xml(result_string)
                 except ET.ParseError:
                     self.items = result_string
 
@@ -138,7 +138,7 @@ class Response(object):
         else:
             raise ValueError("BOLD did not return any result.")
 
-    def parse_xml(self, result_string):
+    def _parse_xml(self, result_string):
         items_from_bold = []
         append = items_from_bold.append
 
