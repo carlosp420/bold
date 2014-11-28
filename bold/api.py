@@ -22,17 +22,6 @@ class Response(object):
     """Accepts results from a call to the BOLD API. Parses the data and returns
     a Response object.
     """
-    def __init__(self):
-        self.items = []
-        self.tax_id = ''
-        self.taxon = ''
-        self.tax_rank = ''
-        self.tax_division = ''
-        self.parent_id = ''
-        self.parent_name = ''
-        self.taxon_rep = ''
-        self.file_contents = ''
-
     def parse_data(self, service, result_string):
         """Parses XML response from BOLD.
 
