@@ -22,7 +22,7 @@ class Response(object):
     """Accepts results from a call to the BOLD API. Parses the data and returns
     a Response object.
     """
-    def parse_data(self, service, result_string):
+    def _parse_data(self, service, result_string):
         """Parses XML response from BOLD.
 
         :param result_string: XML or JSON string returned from BOLD
@@ -284,10 +284,10 @@ class Request(object):
         response = Response()
         if service == 'call_trace_files':
             binary_result = handle.read()
-            response.parse_data(service, binary_result)
+            response._parse_data(service, binary_result)
         else:
             result = _as_string(handle.read())
-            response.parse_data(service, result)
+            response._parse_data(service, result)
         return response
 
 

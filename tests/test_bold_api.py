@@ -212,7 +212,7 @@ class TestApi(unittest.TestCase):
     def test_parse_data_empty(self):
         result_string = ''
         response = api.Response()
-        self.assertRaises(ValueError, response.parse_data, 'call_id', result_string)
+        self.assertRaises(ValueError, response._parse_data, 'call_id', result_string)
 
     def tearDown(self):
         pass
