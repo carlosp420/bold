@@ -117,75 +117,80 @@ class Response(object):
         for match in root.findall(xml_tag):
             item = dict()
             fields = [
-                # from call_id
-                'ID',  # bold_id
-                'sequencedescription',
-                'database',
-                'citation',
-                'taxonomicidentification',
-                'similarity',
-                'specimen/url',
-                'specimen/collectionlocation/country',
-                'specimen/collectionlocation/coord/lat',
-                'specimen/collectionlocation/coord/lon',
+                # These pairs correspond to convertions of key names from BOLD
+                # to friendly versions:
+                #
+                # (key name from BOLD, friendlier key name)
 
-                'record_id',
-                'processid',
-                'bin_uri',
-                'specimen_identifiers/sampleid',
-                'specimen_identifiers/catalognum',
-                'specimen_identifiers/fieldnum',
-                'specimen_identifiers/institution_storing',
-                'taxonomy/identification_provided_by',
-                'taxonomy/phylum/taxon/taxID',
-                'taxonomy/phylum/taxon/name',
-                'taxonomy/class/taxon/taxID',
-                'taxonomy/class/taxon/name',
-                'taxonomy/order/taxon/taxID',
-                'taxonomy/order/taxon/name',
-                'taxonomy/family/taxon/taxID',
-                'taxonomy/family/taxon/name',
-                'taxonomy/genus/taxon/taxID',
-                'taxonomy/genus/taxon/name',
-                'taxonomy/species/taxon/taxID',
-                'taxonomy/species/taxon/name',
-                'specimen_details/voucher_type',
-                'specimen_details/voucher_desc',
-                'specimen_details/extrainfo',
-                'specimen_details/lifestage',
-                'collection_event/collector',
-                'collection_event/collectors',
-                'collection_event/collectiondate',
-                'collection_event/coordinates/lat',
-                'collection_event/coordinates/long',
-                'collection_event/exactsite',
-                'collection_event/country',
-                'collection_event/province',
-                'specimen_imagery/media/mediaID',
-                'specimen_imagery/media/caption',
-                'specimen_imagery/media/metatags',
-                'specimen_imagery/media/copyright',
-                'specimen_imagery/media/image_file',
-                'tracefiles/read/read_id',
-                'tracefiles/read/run_date',
-                'tracefiles/read/sequencing_center',
-                'tracefiles/read/direction',
-                'tracefiles/read/seq_primer',
-                'tracefiles/read/trace_link',
-                'tracefiles/read/markercode',
-                'sequences/sequence/sequenceID',
-                'sequences/sequence/markercode',
-                'sequences/sequence/genbank_accession',
-                'sequences/sequence/nucleotides',
+                # For call_id
+                ('ID', 'bold_id'),
+                ('sequencedescription', 'sequence_description'),
+                ('database', 'database'),
+                ('citation', 'citation'),
+                ('taxonomicidentification', 'taxonomic_identification'),
+                ('similarity', 'similarity'),
+                ('specimen/url', 'specimen_url'),
+                ('specimen/collectionlocation/country', 'specimen_collection_location_country'),
+                ('specimen/collectionlocation/coord/lat', 'specimen_collection_location_latitude'),
+                ('specimen/collectionlocation/coord/lon', 'specimen_collection_location_longitude'),
+
+                ('record_id', 'record_id'),
+                ('processid', 'process_id'),
+                ('bin_uri', 'bin_uri'),
+                ('specimen_identifiers/sampleid', 'specimen_identifiers_sample_id'),
+                ('specimen_identifiers/catalognum', 'specimen_identifiers_catalog_num'),
+                ('specimen_identifiers/fieldnum', 'specimen_identifiers_field_num'),
+                ('specimen_identifiers/institution_storing', 'specimen_identifiers_institution_storing'),
+                ('taxonomy/identification_provided_by', 'taxonomy_identification_provided_by'),
+                ('taxonomy/phylum/taxon/taxID', 'taxonomy_phylum_taxon_id'),
+                ('taxonomy/phylum/taxon/name', 'taxonomy_phylum_taxon_name'),
+                ('taxonomy/class/taxon/taxID', 'taxonomy_class_taxon_id'),
+                ('taxonomy/class/taxon/name', 'taxonomy_class_taxon_name'),
+                ('taxonomy/order/taxon/taxID', 'taxonomy_order_taxon_id'),
+                ('taxonomy/order/taxon/name', 'taxonomy_order_taxon_name'),
+                ('taxonomy/family/taxon/taxID', 'taxonomy_family_taxon_id'),
+                ('taxonomy/family/taxon/name', 'taxonomy_family_taxon_name'),
+                ('taxonomy/genus/taxon/taxID', 'taxonomy_genus_taxon_id'),
+                ('taxonomy/genus/taxon/name', 'taxonomy_genus_taxon_name'),
+                ('taxonomy/species/taxon/taxID', 'taxonomy_species_taxon_id'),
+                ('taxonomy/species/taxon/name', 'taxonomy_species_taxon_name'),
+                ('specimen_details/voucher_type', 'specimen_details_voucher_type'),
+                ('specimen_details/voucher_desc', 'specimen_details_voucher_desc'),
+                ('specimen_details/extrainfo', 'specimen_details_extra_info'),
+                ('specimen_details/lifestage', 'specimen_details_lifestage'),
+                ('collection_event/collector', 'collection_event_collector'),
+                ('collection_event/collectors', 'collection_event_collectors'),
+                ('collection_event/collectiondate', 'collection_event_collection_date'),
+                ('collection_event/coordinates/lat', 'collection_event_coordinates_latitude'),
+                ('collection_event/coordinates/long', 'collection_event_coordinates_longitude'),
+                ('collection_event/exactsite', 'collection_event_exact_site'),
+                ('collection_event/country', 'collection_event_country'),
+                ('collection_event/province', 'collection_event_province'),
+                ('specimen_imagery/media/mediaID', 'specimen_imagery_media_id'),
+                ('specimen_imagery/media/caption', 'specimen_imagery_media_caption'),
+                ('specimen_imagery/media/metatags', 'specimen_imagery_media_metatags'),
+                ('specimen_imagery/media/copyright', 'specimen_imagery_media_copyright'),
+                ('specimen_imagery/media/image_file', 'specimen_imagery_media_image_file'),
+                ('tracefiles/read/read_id', 'tracefiles_read_read_id'),
+                ('tracefiles/read/run_date', 'tracefiles_read_run_date'),
+                ('tracefiles/read/sequencing_center', 'tracefiles_read_sequencing_center'),
+                ('tracefiles/read/direction', 'tracefiles_read_direction'),
+                ('tracefiles/read/seq_primer', 'tracefiles_read_seq_primer'),
+                ('tracefiles/read/trace_link', 'tracefiles_read_trace_link'),
+                ('tracefiles/read/markercode', 'tracefiles_read_marker_code'),
+                ('sequences/sequence/sequenceID', 'sequences_sequence_sequence_id'),
+                ('sequences/sequence/markercode', 'sequences_sequence_marker_code'),
+                ('sequences/sequence/genbank_accession', 'sequences_sequence_genbank_accession'),
+                ('sequences/sequence/nucleotides', 'sequences_sequence_nucleotides'),
             ]
             for field in fields:
-                if match.find(field) is not None:
-                    key = field.replace('/', '_')
-                    matched = match.findall(field)
+                if match.find(field[0]) is not None:
+                    key = field[1]
+                    matched = match.findall(field[0])
                     if len(matched) == 0:
                         item[key] = None
                     elif len(matched) == 1:
-                        item[key] = match.find(field).text
+                        item[key] = match.find(field[0]).text
                     elif len(matched) > 1:
                         item[key] = [i.text for i in matched]
             append(item)
