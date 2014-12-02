@@ -28,53 +28,16 @@ class Response(object):
         :param result_string: XML or JSON string returned from BOLD
         :return: list of all items as dicts if service=call_id
         """
+        self.method = service
+
         if result_string.strip() == '':
             raise ValueError("BOLD did not return any result.")
 
-        if service == 'call_id':
-            items_from_bold = []
-            append = items_from_bold.append
-
-            root = ET.fromstring(result_string)
-            for match in root.findall('match'):
-                item = dict()
-                item['bold_id'] = match.find('ID').text
-                item['sequencedescription'] = match.find('sequencedescription').text
-                item['database'] = match.find('database').text
-                item['citation'] = match.find('citation').text
-                item['taxonomic_identification'] = match.find('taxonomicidentification').text
-                item['similarity'] = float(match.find('similarity').text)
-
-                if match.find('specimen/url').text:
-                    item['specimen_url'] = match.find('specimen/url').text
-                else:
-                    item['specimen_url'] = ''
-
-                if match.find('specimen/collectionlocation/country').text:
-                    item['collection_country'] = match.find('specimen/collectionlocation/country').text
-                else:
-                    item['collection_country'] = ''
-
-                if match.find('specimen/collectionlocation/coord/lat').text:
-                    item['latitude'] = float(match.find('specimen/collectionlocation/coord/lat').text)
-                else:
-                    item['latitude'] = ''
-
-                if match.find('specimen/collectionlocation/coord/lon').text:
-                    item['longitude'] = float(match.find('specimen/collectionlocation/coord/lon').text)
-                else:
-                    item['longitude'] = ''
-
-                append(item)
-            self.items = items_from_bold
-
-        if service == 'call_taxon_search':
+        if service == 'call_taxon_search' or service == 'call_taxon_data':
             self._parse_json(result_string)
 
-        if service == 'call_taxon_data':
-            self._parse_json(result_string)
-
-        if service == 'call_specimen_data' or service == 'call_full_data':
+        if service == 'call_specimen_data' or service == 'call_full_data' or \
+                service == 'call_id':
             # Result_string could be data as tab-separated values (tsv)
             # ugly hack for python 2.6 that does not have ET.ParseError
             if sys.version.startswith('2.6'):
@@ -142,67 +105,89 @@ class Response(object):
         items_from_bold = []
         append = items_from_bold.append
 
+        if self.method == 'call_id':
+            xml_tag = 'match'
+        else:
+            xml_tag = 'record'
+
         root = ET.fromstring(result_string)
-        for match in root.findall('record'):
+        for match in root.findall(xml_tag):
             item = dict()
             fields = [
-                'record_id',
-                'processid',
-                'bin_uri',
-                'specimen_identifiers/sampleid',
-                'specimen_identifiers/catalognum',
-                'specimen_identifiers/fieldnum',
-                'specimen_identifiers/institution_storing',
-                'taxonomy/identification_provided_by',
-                'taxonomy/phylum/taxon/taxID',
-                'taxonomy/phylum/taxon/name',
-                'taxonomy/class/taxon/taxID',
-                'taxonomy/class/taxon/name',
-                'taxonomy/order/taxon/taxID',
-                'taxonomy/order/taxon/name',
-                'taxonomy/family/taxon/taxID',
-                'taxonomy/family/taxon/name',
-                'taxonomy/genus/taxon/taxID',
-                'taxonomy/genus/taxon/name',
-                'taxonomy/species/taxon/taxID',
-                'taxonomy/species/taxon/name',
-                'specimen_details/voucher_type',
-                'specimen_details/voucher_desc',
-                'specimen_details/extrainfo',
-                'specimen_details/lifestage',
-                'collection_event/collector',
-                'collection_event/collectors',
-                'collection_event/collectiondate',
-                'collection_event/coordinates/lat',
-                'collection_event/coordinates/long',
-                'collection_event/exactsite',
-                'collection_event/country',
-                'collection_event/province',
-                'specimen_imagery/media/mediaID',
-                'specimen_imagery/media/caption',
-                'specimen_imagery/media/metatags',
-                'specimen_imagery/media/copyright',
-                'specimen_imagery/media/image_file',
-                'tracefiles/read/read_id',
-                'tracefiles/read/run_date',
-                'tracefiles/read/sequencing_center',
-                'tracefiles/read/direction',
-                'tracefiles/read/seq_primer',
-                'tracefiles/read/trace_link',
-                'tracefiles/read/markercode',
-                'sequences/sequence/sequenceID',
-                'sequences/sequence/markercode',
-                'sequences/sequence/genbank_accession',
-                'sequences/sequence/nucleotides',
+                # These pairs correspond to convertions of key names from BOLD
+                # to friendly versions:
+                #
+                # (key name from BOLD, friendlier key name)
+
+                # For call_id
+                ('ID', 'bold_id'),
+                ('sequencedescription', 'sequence_description'),
+                ('database', 'database'),
+                ('citation', 'citation'),
+                ('taxonomicidentification', 'taxonomic_identification'),
+                ('similarity', 'similarity'),
+                ('specimen/url', 'specimen_url'),
+                ('specimen/collectionlocation/country', 'specimen_collection_location_country'),
+                ('specimen/collectionlocation/coord/lat', 'specimen_collection_location_latitude'),
+                ('specimen/collectionlocation/coord/lon', 'specimen_collection_location_longitude'),
+
+                ('record_id', 'record_id'),
+                ('processid', 'process_id'),
+                ('bin_uri', 'bin_uri'),
+                ('specimen_identifiers/sampleid', 'specimen_identifiers_sample_id'),
+                ('specimen_identifiers/catalognum', 'specimen_identifiers_catalog_num'),
+                ('specimen_identifiers/fieldnum', 'specimen_identifiers_field_num'),
+                ('specimen_identifiers/institution_storing', 'specimen_identifiers_institution_storing'),
+                ('taxonomy/identification_provided_by', 'taxonomy_identification_provided_by'),
+                ('taxonomy/phylum/taxon/taxID', 'taxonomy_phylum_taxon_id'),
+                ('taxonomy/phylum/taxon/name', 'taxonomy_phylum_taxon_name'),
+                ('taxonomy/class/taxon/taxID', 'taxonomy_class_taxon_id'),
+                ('taxonomy/class/taxon/name', 'taxonomy_class_taxon_name'),
+                ('taxonomy/order/taxon/taxID', 'taxonomy_order_taxon_id'),
+                ('taxonomy/order/taxon/name', 'taxonomy_order_taxon_name'),
+                ('taxonomy/family/taxon/taxID', 'taxonomy_family_taxon_id'),
+                ('taxonomy/family/taxon/name', 'taxonomy_family_taxon_name'),
+                ('taxonomy/genus/taxon/taxID', 'taxonomy_genus_taxon_id'),
+                ('taxonomy/genus/taxon/name', 'taxonomy_genus_taxon_name'),
+                ('taxonomy/species/taxon/taxID', 'taxonomy_species_taxon_id'),
+                ('taxonomy/species/taxon/name', 'taxonomy_species_taxon_name'),
+                ('specimen_details/voucher_type', 'specimen_details_voucher_type'),
+                ('specimen_details/voucher_desc', 'specimen_details_voucher_desc'),
+                ('specimen_details/extrainfo', 'specimen_details_extra_info'),
+                ('specimen_details/lifestage', 'specimen_details_lifestage'),
+                ('collection_event/collector', 'collection_event_collector'),
+                ('collection_event/collectors', 'collection_event_collectors'),
+                ('collection_event/collectiondate', 'collection_event_collection_date'),
+                ('collection_event/coordinates/lat', 'collection_event_coordinates_latitude'),
+                ('collection_event/coordinates/long', 'collection_event_coordinates_longitude'),
+                ('collection_event/exactsite', 'collection_event_exact_site'),
+                ('collection_event/country', 'collection_event_country'),
+                ('collection_event/province', 'collection_event_province'),
+                ('specimen_imagery/media/mediaID', 'specimen_imagery_media_id'),
+                ('specimen_imagery/media/caption', 'specimen_imagery_media_caption'),
+                ('specimen_imagery/media/metatags', 'specimen_imagery_media_metatags'),
+                ('specimen_imagery/media/copyright', 'specimen_imagery_media_copyright'),
+                ('specimen_imagery/media/image_file', 'specimen_imagery_media_image_file'),
+                ('tracefiles/read/read_id', 'tracefiles_read_read_id'),
+                ('tracefiles/read/run_date', 'tracefiles_read_run_date'),
+                ('tracefiles/read/sequencing_center', 'tracefiles_read_sequencing_center'),
+                ('tracefiles/read/direction', 'tracefiles_read_direction'),
+                ('tracefiles/read/seq_primer', 'tracefiles_read_seq_primer'),
+                ('tracefiles/read/trace_link', 'tracefiles_read_trace_link'),
+                ('tracefiles/read/markercode', 'tracefiles_read_marker_code'),
+                ('sequences/sequence/sequenceID', 'sequences_sequence_sequence_id'),
+                ('sequences/sequence/markercode', 'sequences_sequence_marker_code'),
+                ('sequences/sequence/genbank_accession', 'sequences_sequence_genbank_accession'),
+                ('sequences/sequence/nucleotides', 'sequences_sequence_nucleotides'),
             ]
             for field in fields:
-                if match.find(field) is not None:
-                    key = field.replace('/', '_')
-                    matched = match.findall(field)
+                if match.find(field[0]) is not None:
+                    key = field[1]
+                    matched = match.findall(field[0])
                     if len(matched) == 0:
                         item[key] = None
                     elif len(matched) == 1:
-                        item[key] = match.find(field).text
+                        item[key] = match.find(field[0]).text
                     elif len(matched) > 1:
                         item[key] = [i.text for i in matched]
             append(item)
@@ -218,8 +203,8 @@ class Response(object):
 
 
 class Request(object):
-    """Constructs a :class:`Request <Request>`. Sends it and returns a
-    :class:`Response <Response>` object.
+    """Constructs a :class:`Request <Request>`. Sends it and returns
+    a :class:`Response <Response>` object.
     """
     def get(self, service, **kwargs):
         """
@@ -250,28 +235,8 @@ class Request(object):
                 'dataTypes': kwargs['data_type'],
             })
 
-        if service == 'call_specimen_data':
-            payload = dict()
-            for k, v in kwargs.items():
-                if v is not None and k != 'url':
-                    payload[k] = v
-            params = _urlencode(payload)
-
-        if service == 'call_sequence_data':
-            payload = dict()
-            for k, v in kwargs.items():
-                if v is not None and k != 'url':
-                    payload[k] = v
-            params = _urlencode(payload)
-
-        if service == 'call_full_data':
-            payload = dict()
-            for k, v in kwargs.items():
-                if v is not None and k != 'url':
-                    payload[k] = v
-            params = _urlencode(payload)
-
-        if service == 'call_trace_files':
+        if service == 'call_specimen_data' or service == 'call_sequence_data' or \
+                service == 'call_full_data' or service == 'call_trace_files':
             payload = dict()
             for k, v in kwargs.items():
                 if v is not None and k != 'url':
@@ -461,17 +426,26 @@ def call_trace_files(taxon=None, ids=None, bin=None, container=None,
     """
     Trace files can be retrieved from BOLD by querying with several parameters.
 
-    :param taxon:
-    :param ids:
-    :param bin:
-    :param container:
-    :param institutions:
-    :param researchers:
-    :param geo:
-    :param marker:
-    :return: a TAR file consisting of compressed Trace Files (traces in either
-             .ab1 or .scf format) along with a file listing the Process ID, taxon and
-             marker for each Trace File included.
+    Args:
+        taxon: Taxon name including the ranks: phylum, class, order, family,
+               subfamily, genus and species. Example: `taxon='Bos taurus'`.
+        ids: Sample ids, process ids, museum ids and field ids. Example:
+             `ids='ACRJP618|ACRJP619-11'`.
+        bin: BIN stands for Barcode Index number URI. Example: `bin='BOLD:AAA5125'`.
+        container: Containers include project codes and dataset codes. Example:
+                   `container='DS-EZROM'`.
+        institutions: Name of Specimen Storing Sites. Example:
+                      `'institutions=Biodiversity Institute of Ontario'`.
+        researchers: Collectors and specimen indenfitiers. Example:
+                     `researchers='Thibaud Decaens'`.
+        geo: Geographic sites such as countries, provinces and states. Example:
+             `geo='Alaska'`.
+        marker: Genetic marker code. Example: `marker='COI-5P'`.
+
+    Returns:
+        A TAR file consisting of compressed Trace Files (traces in either
+        .ab1 or .scf format) along with a file listing the Process ID, taxon and
+        marker for each Trace File included.
     """
     return request('call_trace_files', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,

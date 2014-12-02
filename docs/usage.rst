@@ -25,13 +25,13 @@ How to use it::
     >>> item['taxonomic_identification']   # the species name
     'Hermeuptychia gisella'
     >>> item['similarity']   # degree of Barcode similiarity
-    0.9171
-    >>> item['collection_country']   # country of origin of the specimen in BOLD
+    '0.9171'
+    >>> item['specimen_collection_location_country']   # country of origin of the specimen in BOLD
     'Brazil'
-    >>> item['latitude']
-    -23.9
-    >>> item['longitude']
-    -46.39
+    >>> item['specimen_collection_location_latitude']
+    '-23.9'
+    >>> item['specimen_collection_location_longitude']
+    '-46.39'
 
 TaxonSearch API
 ---------------

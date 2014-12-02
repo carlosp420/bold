@@ -48,6 +48,9 @@ coverage: clean-test
 	coverage report -m
 	coverage html
 
+doctest:
+	nosetests --verbosity 2 --with-doctest --doctest-extension=rst docs
+
 docs:
 	rm -f docs/bold.rst
 	rm -f docs/modules.rst

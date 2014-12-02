@@ -147,7 +147,7 @@ class TestApi(unittest.TestCase):
         taxon = 'Hermeuptychia'
         geo = 'Peru'
         res = bold.call_full_data(taxon=taxon, geo=geo)
-        genbank_accession_numbers = [item['specimen_identifiers_sampleid'] for item in res.items]
+        genbank_accession_numbers = [item['specimen_identifiers_sample_id'] for item in res.items]
         self.assertTrue('KF466142' in genbank_accession_numbers)
 
     def test_call_full_data_invalid(self):
