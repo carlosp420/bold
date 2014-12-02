@@ -405,11 +405,36 @@ def call_sequence_data(taxon=None, ids=None, bin=None, container=None,
 def call_full_data(taxon=None, ids=None, bin=None, container=None,
                    institutions=None, researchers=None, geo=None,
                    marker=None, format=None):
-    """Call the Full Data Retrieval API (combined). Returns data as TSV format
-    or list of dicts parsed from a XML file.
+    """Call the Full Data Retrieval API (combined).
 
-    :param taxon: ``Aves|Reptilia``, ``Bos taurus``
-    :return: Seq objects
+    Args:
+        taxon: Taxon name including the ranks: phylum, class, order, family,
+               subfamily, genus and species. Example: `taxon='Bos taurus'`.
+        ids: Sample ids, process ids, museum ids and field ids. Example:
+             `ids='ACRJP618|ACRJP619-11'`.
+        bin: BIN stands for Barcode Index number URI. Example: `bin='BOLD:AAA5125'`.
+        container: Containers include project codes and dataset codes. Example:
+                   `container='DS-EZROM'`.
+        institutions: Name of Specimen Storing Sites. Example:
+                      `'institutions=Biodiversity Institute of Ontario'`.
+        researchers: Collectors and specimen indenfitiers. Example:
+                     `researchers='Thibaud Decaens'`.
+        geo: Geographic sites such as countries, provinces and states. Example:
+             `geo='Alaska'`.
+        marker: Genetic marker code. Example: `marker='COI-5P'`.
+        format: Optional. `format='tsv'`.
+
+    Returns:
+        The data is returned as a string in TSV format or list of dicts parsed
+        from a XML file.
+
+    Examples:
+
+        >>> res = bold.call_full_data(taxon='Hermeuptychia', geo='Peru')
+        >>> item = res.items[0]
+        >>> [item['sequences_sequence_genbank_accession'] for item in res.items]
+        ['KF466142', 'KF466143', 'KF466144']
+
     """
     if format is not None and format != 'tsv':
         raise ValueError('Invalid value for ``format``')
@@ -452,6 +477,7 @@ def call_trace_files(taxon=None, ids=None, bin=None, container=None,
         ...                             institutions='York University')
         >>> with open("trace_files.tar", "wb") as handle:
         ...     handle.write(res.file_contents)
+
     """
     return request('call_trace_files', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,
