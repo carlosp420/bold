@@ -63,6 +63,7 @@ class Response(object):
         append = items_from_bold.append
         response = json.loads(result_string)
         if hasattr(response, 'items'):
+            print(response)
             # Is this a simple JSON and we got only one item?
             simple_json = False
             for i in response.keys():
@@ -219,7 +220,7 @@ class Request(object):
             params = _urlencode({'db': kwargs['db'], 'sequence': sequence})
 
         if service == 'call_taxon_search':
-            if kwargs['fuzzy']:
+            if kwargs['fuzzy'] is True:
                 # TODO: it shouldn't be: if kwargs['fuzzy'] is True ?
                 fuzzy = 'true'
             else:
@@ -228,6 +229,7 @@ class Request(object):
                 'taxName': kwargs['taxonomic_identification'],
                 'fuzzy': fuzzy,
             })
+            print(params)
 
         if service == 'call_taxon_data':
             if kwargs['include_tree'] is False:
@@ -251,14 +253,17 @@ class Request(object):
             params = _urlencode(payload)
 
         url = kwargs['url'] + "?" + params
+        print(url)
         req = _Request(url, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
         response = Response()
+
         if service == 'call_trace_files':
             binary_result = handle.read()
             response._parse_data(service, binary_result)
         else:
             result = _as_string(handle.read())
+            print(result)
             response._parse_data(service, result)
         return response
 
@@ -344,15 +349,24 @@ def call_id(seq, db, **kwargs):
     return request('call_id', seq=seq, db=db, **kwargs)
 
 
-def call_taxon_search(taxonomic_identification, fuzzy=False):
+def call_taxon_search(taxonomic_identification, fuzzy=None):
     """Call the TaxonSearch API
     http://www.boldsystems.org/index.php/resources/api?type=taxonomy#Ideasforwebservices-SequenceParameters
 
-    :param taxonomic_identification: species or any taxon name
-    :param fuzzy: False by default
-    :return:
+    Args:
+        taxonomic_identification: species or any taxon name
+        fuzzy: False by default
+
+    Returns:
+
     """
-    # TODO check when Fuzzy is True
+    if fuzzy is None or fuzzy is False:
+        fuzzy = False
+    elif fuzzy is True:
+        fuzzy = True
+    else:
+        raise ValueError('Invalid value for ``fuzzy``. Use True or False.')
+
     return request('call_taxon_search',
                    taxonomic_identification=taxonomic_identification,
                    fuzzy=fuzzy
