@@ -369,14 +369,38 @@ def call_taxon_data(tax_id, data_type=None):
 def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
                        institutions=None, researchers=None, geo=None,
                        format=None):
-    """Call the Specimen Data Retrieval API. Returns matching specimen data
-    records.
+    """Call the Specimen Data Retrieval API.
 
-    :param taxon: ``Aves|Reptilia``, ``Bos taurus``
-    :param format: Optional: ``format='tsv'`` will return results a string
-                   containing data in tab-separated values. If not used, the
-                   data will be returned as dictionary (default behaviour).
-    :return:
+    Args:
+        taxon: Taxon name including the ranks: phylum, class, order, family,
+               subfamily, genus and species. Example: `taxon='Bos taurus'`.
+        ids: Sample ids, process ids, museum ids and field ids. Example:
+             `ids='ACRJP618|ACRJP619-11'`.
+        bin: BIN stands for Barcode Index number URI. Example: `bin='BOLD:AAA5125'`.
+        container: Containers include project codes and dataset codes. Example:
+                   `container='DS-EZROM'`.
+        institutions: Name of Specimen Storing Sites. Example:
+                      `'institutions=Biodiversity Institute of Ontario'`.
+        researchers: Collectors and specimen indenfitiers. Example:
+                     `researchers='Thibaud Decaens'`.
+        geo: Geographic sites such as countries, provinces and states. Example:
+             `geo='Alaska'`.
+        format: Optional: ``format='tsv'`` will return results a string
+                containing data in tab-separated values. If not used, the
+                data will be returned as dictionary (default behaviour).
+
+    Returns:
+        Matching specimen data records as string in TSV format or as list of
+        dictionaries.
+
+    Examples:
+
+        >>> bin = 'BOLD:AAE2777'
+        >>> res = bold.call_specimen_data(bin=bin)
+        >>> class_taxon_names = [item['taxonomy_class_taxon_name'] for item in res.items]
+        >>> class_taxon_names[0]
+        'Insecta'
+
     """
     if format is not None and format != 'tsv':
         raise ValueError('Invalid value for ``format``')
