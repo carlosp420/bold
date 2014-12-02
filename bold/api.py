@@ -561,6 +561,7 @@ def call_trace_files(taxon=None, ids=None, bin=None, container=None,
         ...                             institutions='York University')
         >>> with open("trace_files.tar", "wb") as handle:
         ...     handle.write(res.file_contents)
+        4106240
 
     """
     return request('call_trace_files', taxon=taxon, ids=ids, bin=bin,

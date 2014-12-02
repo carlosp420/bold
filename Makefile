@@ -43,13 +43,13 @@ test-all:
 	tox
 
 coverage: clean-test
-	nosetests --verbosity 2 --with-doctest --doctest-extension=rst docs
+	nosetests --verbosity 2 --with-doctest --doctest-extension=rst docs bold
 	coverage run --source bold setup.py test
 	coverage report -m
 	coverage html
 
 doctest:
-	nosetests --verbosity 2 --with-doctest --doctest-extension=rst docs
+	nosetests --verbosity 2 --with-doctest --doctest-extension=rst docs bold
 
 docs:
 	rm -f docs/bold.rst
