@@ -230,10 +230,17 @@ class Request(object):
             })
 
         if service == 'call_taxon_data':
-            params = _urlencode({
-                'taxId': kwargs['tax_id'],
-                'dataTypes': kwargs['data_type'],
-            })
+            if kwargs['include_tree'] is False:
+                params = _urlencode({
+                    'taxId': kwargs['tax_id'],
+                    'dataTypes': kwargs['data_type'],
+                })
+            else:
+                params = _urlencode({
+                    'taxId': kwargs['tax_id'],
+                    'dataTypes': kwargs['data_type'],
+                    'includeTree': 'true',
+                })
 
         if service == 'call_specimen_data' or service == 'call_sequence_data' or \
                 service == 'call_full_data' or service == 'call_trace_files':
@@ -352,18 +359,44 @@ def call_taxon_search(taxonomic_identification, fuzzy=False):
                    )
 
 
-def call_taxon_data(tax_id, data_type=None):
+def call_taxon_data(tax_id, data_type=None, include_tree=None):
     """Call the TaxonData API. It has several methods to get additional
     metadata.
 
-    :param tax_id:
-    :param data_type: ``basic|all|images``. Default is ``basic``.
-    :return:
+    Args:
+        tax_id: Taxon to get information for.
+        data_type: ``basic|all|images``. Default is ``basic``.
+        include_tree: Optional. Also returns information for parent taxa. True or
+                  False (default).
+
+    Returns:
+        List of dictionaries containing metadata for a given taxon.
+
+    Examples:
+
+        >>> import bold
+        >>> tax_id = 88899
+        >>> res = bold.call_taxon_data(tax_id, data_type='basic,images')
+        >>> item = res.items[0]
+        >>> item['taxon']
+        'Momotus'
+        >>> [(i['image'], i['photographer']) for i in item['images']]
+        [('BSPBB/MJM_7364_IMG_2240_d+1345758620.JPG', 'Oscar Lopez')]
+
     """
     if data_type is None:
         # We will use by default data_type='basic'
         data_type = 'basic'
-    return request('call_taxon_data', tax_id=tax_id, data_type=data_type)
+
+    if include_tree is None or include_tree is False:
+        include_tree = False
+    elif include_tree is True:
+        include_tree = True
+    else:
+        raise ValueError('Invalid value for ``include_tree``. Use True or False.')
+
+    return request('call_taxon_data', tax_id=tax_id, data_type=data_type,
+                   include_tree=include_tree)
 
 
 def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
@@ -395,6 +428,7 @@ def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
 
     Examples:
 
+        >>> import bold
         >>> bin = 'BOLD:AAE2777'
         >>> res = bold.call_specimen_data(bin=bin)
         >>> class_taxon_names = [item['taxonomy_class_taxon_name'] for item in res.items]
@@ -437,6 +471,7 @@ def call_sequence_data(taxon=None, ids=None, bin=None, container=None,
 
     Examples:
 
+        >>> import bold
         >>> res = bold.call_sequence_data(taxon='Hermeuptychia', geo='Peru')
         >>> items = res.items
         >>> [item.id for item in items]
@@ -477,6 +512,7 @@ def call_full_data(taxon=None, ids=None, bin=None, container=None,
 
     Examples:
 
+        >>> import bold
         >>> res = bold.call_full_data(taxon='Hermeuptychia', geo='Peru')
         >>> item = res.items[0]
         >>> [item['sequences_sequence_genbank_accession'] for item in res.items]
@@ -520,6 +556,7 @@ def call_trace_files(taxon=None, ids=None, bin=None, container=None,
 
     Examples:
 
+        >>> import bold
         >>> res = bold.call_trace_files(taxon='Euptychia mollis',
         ...                             institutions='York University')
         >>> with open("trace_files.tar", "wb") as handle:
