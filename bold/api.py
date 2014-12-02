@@ -235,21 +235,8 @@ class Request(object):
                 'dataTypes': kwargs['data_type'],
             })
 
-        if service == 'call_specimen_data':
-            payload = dict()
-            for k, v in kwargs.items():
-                if v is not None and k != 'url':
-                    payload[k] = v
-            params = _urlencode(payload)
-
-        if service == 'call_sequence_data':
-            payload = dict()
-            for k, v in kwargs.items():
-                if v is not None and k != 'url':
-                    payload[k] = v
-            params = _urlencode(payload)
-
-        if service == 'call_full_data':
+        if service == 'call_specimen_data' or service == 'call_sequence_data' or \
+                service == 'call_full_data':
             payload = dict()
             for k, v in kwargs.items():
                 if v is not None and k != 'url':
