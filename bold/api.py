@@ -423,8 +423,7 @@ def call_full_data(taxon=None, ids=None, bin=None, container=None,
 def call_trace_files(taxon=None, ids=None, bin=None, container=None,
                      institutions=None, researchers=None, geo=None,
                      marker=None):
-    """
-    Trace files can be retrieved from BOLD by querying with several parameters.
+    """Trace files can be retrieved from BOLD by querying with several parameters.
 
     Args:
         taxon: Taxon name including the ranks: phylum, class, order, family,
@@ -446,6 +445,13 @@ def call_trace_files(taxon=None, ids=None, bin=None, container=None,
         A TAR file consisting of compressed Trace Files (traces in either
         .ab1 or .scf format) along with a file listing the Process ID, taxon and
         marker for each Trace File included.
+
+    Examples:
+
+        >>> res = bold.call_trace_files(taxon='Euptychia mollis',
+        ...                             institutions='York University')
+        >>> with open("trace_files.tar", "wb") as handle:
+        ...     handle.write(res.file_contents)
     """
     return request('call_trace_files', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,
