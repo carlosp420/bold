@@ -28,45 +28,10 @@ class Response(object):
         :param result_string: XML or JSON string returned from BOLD
         :return: list of all items as dicts if service=call_id
         """
+        self.method = service
+
         if result_string.strip() == '':
             raise ValueError("BOLD did not return any result.")
-
-        if service == 'call_id':
-            items_from_bold = []
-            append = items_from_bold.append
-
-            root = ET.fromstring(result_string)
-            for match in root.findall('match'):
-                item = dict()
-                item['bold_id'] = match.find('ID').text
-                item['sequencedescription'] = match.find('sequencedescription').text
-                item['database'] = match.find('database').text
-                item['citation'] = match.find('citation').text
-                item['taxonomic_identification'] = match.find('taxonomicidentification').text
-                item['similarity'] = float(match.find('similarity').text)
-
-                if match.find('specimen/url').text:
-                    item['specimen_url'] = match.find('specimen/url').text
-                else:
-                    item['specimen_url'] = ''
-
-                if match.find('specimen/collectionlocation/country').text:
-                    item['collection_country'] = match.find('specimen/collectionlocation/country').text
-                else:
-                    item['collection_country'] = ''
-
-                if match.find('specimen/collectionlocation/coord/lat').text:
-                    item['latitude'] = float(match.find('specimen/collectionlocation/coord/lat').text)
-                else:
-                    item['latitude'] = ''
-
-                if match.find('specimen/collectionlocation/coord/lon').text:
-                    item['longitude'] = float(match.find('specimen/collectionlocation/coord/lon').text)
-                else:
-                    item['longitude'] = ''
-
-                append(item)
-            self.items = items_from_bold
 
         if service == 'call_taxon_search':
             self._parse_json(result_string)
@@ -74,7 +39,8 @@ class Response(object):
         if service == 'call_taxon_data':
             self._parse_json(result_string)
 
-        if service == 'call_specimen_data' or service == 'call_full_data':
+        if service == 'call_specimen_data' or service == 'call_full_data' or \
+                service == 'call_id':
             # Result_string could be data as tab-separated values (tsv)
             # ugly hack for python 2.6 that does not have ET.ParseError
             if sys.version.startswith('2.6'):
@@ -142,10 +108,27 @@ class Response(object):
         items_from_bold = []
         append = items_from_bold.append
 
+        if self.method == 'call_id':
+            xml_tag = 'match'
+        else:
+            xml_tag = 'record'
+
         root = ET.fromstring(result_string)
-        for match in root.findall('record'):
+        for match in root.findall(xml_tag):
             item = dict()
             fields = [
+                # from call_id
+                'ID',  # bold_id
+                'sequencedescription',
+                'database',
+                'citation',
+                'taxonomicidentification',
+                'similarity',
+                'specimen/url',
+                'specimen/collectionlocation/country',
+                'specimen/collectionlocation/coord/lat',
+                'specimen/collectionlocation/coord/lon',
+
                 'record_id',
                 'processid',
                 'bin_uri',
