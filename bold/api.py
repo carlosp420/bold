@@ -33,10 +33,7 @@ class Response(object):
         if result_string.strip() == '':
             raise ValueError("BOLD did not return any result.")
 
-        if service == 'call_taxon_search':
-            self._parse_json(result_string)
-
-        if service == 'call_taxon_data':
+        if service == 'call_taxon_search' or service == 'call_taxon_data':
             self._parse_json(result_string)
 
         if service == 'call_specimen_data' or service == 'call_full_data' or \
