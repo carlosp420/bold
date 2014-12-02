@@ -203,8 +203,8 @@ class Response(object):
 
 
 class Request(object):
-    """Constructs a :class:`Request <Request>`. Sends it and returns a
-    :class:`Response <Response>` object.
+    """Constructs a :class:`Request <Request>`. Sends it and returns
+    a :class:`Response <Response>` object.
     """
     def get(self, service, **kwargs):
         """
@@ -426,17 +426,26 @@ def call_trace_files(taxon=None, ids=None, bin=None, container=None,
     """
     Trace files can be retrieved from BOLD by querying with several parameters.
 
-    :param taxon:
-    :param ids:
-    :param bin:
-    :param container:
-    :param institutions:
-    :param researchers:
-    :param geo:
-    :param marker:
-    :return: a TAR file consisting of compressed Trace Files (traces in either
-             .ab1 or .scf format) along with a file listing the Process ID, taxon and
-             marker for each Trace File included.
+    Args:
+        taxon: Taxon name including the ranks: phylum, class, order, family,
+               subfamily, genus and species. Example: `taxon='Bos taurus'`.
+        ids: Sample ids, process ids, museum ids and field ids. Example:
+             `ids='ACRJP618|ACRJP619-11'`.
+        bin: BIN stands for Barcode Index number URI. Example: `bin='BOLD:AAA5125'`.
+        container: Containers include project codes and dataset codes. Example:
+                   `container='DS-EZROM'`.
+        institutions: Name of Specimen Storing Sites. Example:
+                      `'institutions=Biodiversity Institute of Ontario'`.
+        researchers: Collectors and specimen indenfitiers. Example:
+                     `researchers='Thibaud Decaens'`.
+        geo: Geographic sites such as countries, provinces and states. Example:
+             `geo='Alaska'`.
+        marker: Genetic marker code. Example: `marker='COI-5P'`.
+
+    Returns:
+        A TAR file consisting of compressed Trace Files (traces in either
+        .ab1 or .scf format) along with a file listing the Process ID, taxon and
+        marker for each Trace File included.
     """
     return request('call_trace_files', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,
