@@ -390,11 +390,34 @@ def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
 def call_sequence_data(taxon=None, ids=None, bin=None, container=None,
                        institutions=None, researchers=None, geo=None,
                        marker=None):
-    """Call the Specimen Data Retrieval API. Returns DNA sequences in FASTA
-    format for matching records.
+    """Call the Specimen Data Retrieval API.
 
-    :param taxon: ``Aves|Reptilia``, ``Bos taurus``
-    :return: Seq objects
+    Args:
+        taxon: Taxon name including the ranks: phylum, class, order, family,
+               subfamily, genus and species. Example: `taxon='Bos taurus'`.
+        ids: Sample ids, process ids, museum ids and field ids. Example:
+             `ids='ACRJP618|ACRJP619-11'`.
+        bin: BIN stands for Barcode Index number URI. Example: `bin='BOLD:AAA5125'`.
+        container: Containers include project codes and dataset codes. Example:
+                   `container='DS-EZROM'`.
+        institutions: Name of Specimen Storing Sites. Example:
+                      `'institutions=Biodiversity Institute of Ontario'`.
+        researchers: Collectors and specimen indenfitiers. Example:
+                     `researchers='Thibaud Decaens'`.
+        geo: Geographic sites such as countries, provinces and states. Example:
+             `geo='Alaska'`.
+        marker: Genetic marker code. Example: `marker='COI-5P'`.
+
+    Returns:
+        DNA sequences of matching records in FASTA format.
+
+    Examples:
+
+        >>> res = bold.call_sequence_data(taxon='Hermeuptychia', geo='Peru')
+        >>> items = res.items
+        >>> [item.id for item in items]
+        ['GBLN4477-14|Hermeuptychia', 'GBLN4478-14|Hermeuptychia', 'GBLN4479-14|Hermeuptychia']
+
     """
     return request('call_sequence_data', taxon=taxon, ids=ids, bin=bin,
                    container=container, institutions=institutions,
