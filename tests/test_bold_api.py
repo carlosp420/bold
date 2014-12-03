@@ -44,6 +44,14 @@ class TestApi(unittest.TestCase):
         taxonomic_identification = 'Fake species name'
         self.assertRaises(ValueError, bold.call_taxon_search, taxonomic_identification, fuzzy=False)
 
+    def test_call_taxon_search_fuzzy_true(self):
+        taxonomic_identification = 'Fabaceae'
+        res = bold.call_taxon_search(taxonomic_identification, fuzzy=True)
+        self.assertEqual(5, len(res.items))
+
+    def test_call_taxon_search_fuzzy_error(self):
+        self.assertRaises(ValueError, bold.call_taxon_search, 'Fabaceae', 'true')
+
     def test_call_specimen_data(self):
         taxon = 'Euptychia'
         res = bold.call_specimen_data(taxon)
@@ -118,17 +126,36 @@ class TestApi(unittest.TestCase):
         geo = 'Fake country name'
         self.assertRaises(ValueError, bold.call_specimen_data, geo=geo)
 
-    def test_call_taxon_data(self):
+    def test_call_taxon_data_basic(self):
         tax_id = 302603
         # using default datatype='basic'
         res = bold.call_taxon_data(tax_id, data_type='basic')
         item = res.items[0]
         self.assertEqual(7044, item['parent_id'])
 
-        # not using parameter datatype='basic'
+    def test_call_taxon_data_basic_empty(self):
+        tax_id = 302603
         res = bold.call_taxon_data(tax_id)
         item = res.items[0]
         self.assertEqual(7044, item['parent_id'])
+
+    def test_call_taxon_data_includetree_false(self):
+        tax_id = 302603
+        # using default datatype='basic'
+        res = bold.call_taxon_data(tax_id, data_type='basic', include_tree=False)
+        item = res.items[0]
+        self.assertEqual(7044, item['parent_id'])
+
+    def test_call_taxon_data_includetree_true(self):
+        tax_id = 302603
+        # using default datatype='basic'
+        res = bold.call_taxon_data(tax_id, data_type='basic', include_tree=True)
+        self.assertEqual(7, len(res.items))
+
+    def test_call_taxon_data_includetree_error(self):
+        tax_id = 302603
+        # using default datatype='basic'
+        self.assertRaises(ValueError, bold.call_taxon_data, (tax_id, 'basic', 'true'))
 
     def test_call_sequence_data(self):
         taxon = 'Hermeuptychia'

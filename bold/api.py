@@ -72,31 +72,33 @@ class Response(object):
 
             if simple_json is True:
                 response = [response]
-            for obj in response:
+            for string_id in response:
                 item = dict()
                 try:
-                    json_obj = response[obj]
+                    json_obj = response[string_id]
                 except TypeError:
+                    obj = string_id
                     json_obj = obj
 
-                for k, v in json_obj.items():
-                    if k == 'taxid':
-                        item['tax_id'] = v
-                    elif k == 'taxon':
-                        item['taxon'] = v
-                    elif k == 'tax_rank':
-                        item['tax_rank'] = v
-                    elif k == 'tax_division':
-                        item['tax_division'] = v
-                    elif k == 'parentid':
-                        item['parent_id'] = v
-                    elif k == 'parentname':
-                        item['parent_name'] = v
-                    elif k == 'taxonrep':
-                        item['taxon_rep'] = v
-                    else:
-                        item[k] = v
-                append(item)
+                if hasattr(json_obj, 'items'):
+                    for k, v in json_obj.items():
+                        if k == 'taxid':
+                            item['tax_id'] = v
+                        elif k == 'taxon':
+                            item['taxon'] = v
+                        elif k == 'tax_rank':
+                            item['tax_rank'] = v
+                        elif k == 'tax_division':
+                            item['tax_division'] = v
+                        elif k == 'parentid':
+                            item['parent_id'] = v
+                        elif k == 'parentname':
+                            item['parent_name'] = v
+                        elif k == 'taxonrep':
+                            item['taxon_rep'] = v
+                        else:
+                            item[k] = v
+                    append(item)
             self.items = items_from_bold
         else:
             raise ValueError("BOLD did not return any result.")
@@ -220,7 +222,6 @@ class Request(object):
 
         if service == 'call_taxon_search':
             if kwargs['fuzzy'] is True:
-                # TODO: it shouldn't be: if kwargs['fuzzy'] is True ?
                 fuzzy = 'true'
             else:
                 fuzzy = 'false'
