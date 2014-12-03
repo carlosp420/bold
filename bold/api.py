@@ -332,18 +332,29 @@ def request(service, **kwargs):
     return req.get(service=service, url=url, **kwargs)
 
 
-def call_id(seq, db, **kwargs):
+def call_id(seq, db):
     """Call the ID Engine API
     http://www.boldsystems.org/index.php/resources/api?type=idengine
 
-    :param seq: DNA sequence string or seq_record object.
-    :param db: the BOLD database of available records.
-               Choices: ``COX1_SPECIES``, ``COX1``, ``COX1_SPECIES_PUBLIC``,
-               ``COX1_L640bp``.
-    :param kwargs:
-    :return:
+    Args:
+        seq: DNA sequence string or seq_record object.
+        db: The BOLD database of available records. Choices: ``COX1_SPECIES``,'
+            ``COX1``, ``COX1_SPECIES_PUBLIC``, ``COX1_L640bp``.
+
+    Returns:
+        List of dictionaries containing metadata. One dictionary per BOLD record.
+
+    Examples:
+
+        >>> import bold
+        >>> seq = 'TTTTTGGTATTTGAGCAGGAATAGTAGGAACTTCTCTCAGTTTAATTATTCGAATAGAATTAGGTAATCCAGGTTTCTTAATTGGAGATGATCAAATTTATAATACTATTGTAACAGCCCATGCTTTTATTATAATTTTTTTTATAGTTATACCTATTGTAATTGGAGGATTTGGAAATTGACTAGTTCCCCTAATATTAGGTGCACCTGATATAGCTTTCCCTCGTATAAATAATATAAGATATTGACTACTTCCACCATCTTTAATATTATTAATTTCAAGTAGTATTGTAGAAAATGGAGCTGGAACAGGTTGAACAGTTTACCCCCCTCTTTCCTCTAATATTGCTCATAGAGGAACCTCAGTAGACTTAGCAATTTTTTCTCTTCATTTAGCTGGTATTTCTTCTATTTTAGGAGCTATTAATTTTATTACTACAATTATTAATATACGAGTTAATGGAATATCCTATGATCAAATACCTTTATTTGTTTGAGCTGTTGGAATTACAGCTCTTCTTTTACTTCTTTCTTTACCTGTTTTAGCAGGAGCTATCACAATACTTCTTACAGATCGAAATTTAAATACATCATTTTTTGATCCTGCAGGAGGAGGTGATCCAATTTTATACCAACATTTATTTTGATTTTTTGGTCACCC'
+        >>> res = bold.call_id(seq, db='COX1')
+        >>> item = res.items[1]
+        >>> item['bold_id']  # this is the ID assigned by BOLD
+        'GBLN3590-14'
+
     """
-    return request('call_id', seq=seq, db=db, **kwargs)
+    return request('call_id', seq=seq, db=db)
 
 
 def call_taxon_search(taxonomic_identification, fuzzy=None):
@@ -357,8 +368,12 @@ def call_taxon_search(taxonomic_identification, fuzzy=None):
     Returns:
         List of dictionaries containing metadata. One dictionary per BOLD record.
 
+    Raises:
+        ValueError: If `fuzzy` is not True or False.
+
     Examples:
 
+        >>> import bold
         >>> res = bold.call_taxon_search(taxonomic_identification, fuzzy=False)
         >>> item = res.items[0]  # there can be more than one result
         >>> item['tax_id']
@@ -390,6 +405,9 @@ def call_taxon_data(tax_id, data_type=None, include_tree=None):
 
     Returns:
         List of dictionaries containing metadata for a given taxon.
+
+    Raises:
+        ValueError: If `include_tree` is not True or False.
 
     Examples:
 
@@ -440,6 +458,9 @@ def call_specimen_data(taxon=None, ids=None, bin=None, container=None,
         format: Optional: ``format='tsv'`` will return results a string
                 containing data in tab-separated values. If not used, the
                 data will be returned as dictionary (default behaviour).
+
+    Raises:
+        ValueError: If `format` is not None and not 'tsv'.
 
     Returns:
         Matching specimen data records as string in TSV format or as list of
@@ -528,6 +549,9 @@ def call_full_data(taxon=None, ids=None, bin=None, container=None,
     Returns:
         The data is returned as a string in TSV format or list of dicts parsed
         from a XML file.
+
+    Raises:
+        ValueError: If `format` is not None or 'tsv'.
 
     Examples:
 
