@@ -355,6 +355,14 @@ def call_taxon_search(taxonomic_identification, fuzzy=None):
         fuzzy: False by default
 
     Returns:
+        List of dictionaries containing metadata. One dictionary per BOLD record.
+
+    Examples:
+
+        >>> res = bold.call_taxon_search(taxonomic_identification, fuzzy=False)
+        >>> item = res.items[0]  # there can be more than one result
+        >>> item['tax_id']
+        302603
 
     """
     if fuzzy is None or fuzzy is False:
