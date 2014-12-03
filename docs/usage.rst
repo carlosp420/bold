@@ -115,10 +115,10 @@ is equivalent do ``OR``.::
     >>> item['taxonomy_family_taxon_name']
     'Nymphalidae'
 
-    >>> res = bold.call_specimen_data(ids='11-SRNP-42276')
-    >>> item = res.items[0]
-    >>> [i for i in item['specimen_imagery_media_image_file']]
-    ['http://www.boldsystems.org/pics/MHMYM/11-SRNP-42276-DHJ543456+1331929372.jpg', 'http://www.boldsystems.org/pics/MHMYM/11-SRNP-42276-DHJ543457+1331929372.jpg']
+    >>> res = bold.call_specimen_data(ids='ITSAI1253-14')
+    >>> [i['specimen_identifiers_sample_id'] for i in res.items]
+    ['FJ384049']
+
 
     >>> bin = 'BOLD:AAE2777'
     >>> res = bold.call_specimen_data(bin=bin)

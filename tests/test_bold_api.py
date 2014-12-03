@@ -3,6 +3,8 @@ import unittest
 import warnings
 
 from Bio import BiopythonWarning
+from Bio._py3k import HTTPError
+from Bio import MissingExternalDependencyError
 
 import bold
 from bold import api
@@ -75,7 +77,12 @@ class TestApi(unittest.TestCase):
 
     def test_call_specimen_data_container(self):
         container = 'ACRJP'
-        res = bold.call_specimen_data(container=container)
+        try:
+            res = bold.call_specimen_data(container=container)
+        except HTTPError:
+            # e.g. due to timeout
+            raise MissingExternalDependencyError("internet connection failed")
+
         taxonomy_identifications = []
         append = taxonomy_identifications.append
         for item in res.items:
