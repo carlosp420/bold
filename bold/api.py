@@ -374,6 +374,7 @@ def call_taxon_search(taxonomic_identification, fuzzy=None):
     Examples:
 
         >>> import bold
+        >>> taxonomic_identification = 'Euptychia ordinata'
         >>> res = bold.call_taxon_search(taxonomic_identification, fuzzy=False)
         >>> item = res.items[0]  # there can be more than one result
         >>> item['tax_id']
