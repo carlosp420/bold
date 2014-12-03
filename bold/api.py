@@ -13,20 +13,30 @@ from Bio._py3k import Request as _Request
 from Bio._py3k import urlopen as _urlopen
 from Bio._py3k import urlencode as _urlencode
 from Bio._py3k import _as_string
-from Bio._py3k import StringIO
 
 from . import utils
 
 
 class Response(object):
-    """Accepts results from a call to the BOLD API. Parses the data and returns
-    a Response object.
+    """Accepts and parses results from a call to the BOLD API.
+
+    Parses the data and returns a Response object.
+
+    Attributes:
+        items (list or str): Metadata from BOLD after parsing.
+        service (str): Alias of the method used to interact with BOLD.
+
     """
     def _parse_data(self, service, result_string):
         """Parses XML response from BOLD.
 
-        :param result_string: XML or JSON string returned from BOLD
-        :return: list of all items as dicts if service=call_id
+        Args:
+            service: Alias of the method used to interact with BOLD.
+            result_string: XML or JSON string returned from BOLD.
+
+        Returns:
+            List of all items as dictionaries.
+
         """
         self.method = service
 
@@ -59,6 +69,18 @@ class Response(object):
             self.file_contents = result_string
 
     def _parse_json(self, result_string):
+        """Parses JSON response from BOLD.
+
+        Args:
+            result_string: JSON string returned from BOLD.
+
+        Returns:
+            List of all items as dictionaries.
+
+        Raises:
+            ValueError: "BOLD did not return any result."
+
+        """
         items_from_bold = []
         append = items_from_bold.append
         response = json.loads(result_string)
@@ -104,6 +126,15 @@ class Response(object):
             raise ValueError("BOLD did not return any result.")
 
     def _parse_xml(self, result_string):
+        """Parses XML response from BOLD.
+
+        Args:
+            result_string: XML string returned from BOLD.
+
+        Returns:
+            List of all items as dictionaries.
+
+        """
         items_from_bold = []
         append = items_from_bold.append
 
@@ -196,6 +227,15 @@ class Response(object):
         self.items = items_from_bold
 
     def _parse_fasta(self, result_string):
+        """Parses string response from BOLD containing FASTA sequences.
+
+        Args:
+            result_string: FASTA sequences as string returned from BOLD.
+
+        Returns:
+            List of all items as Biopython SeqRecord objects.
+
+        """
         filename = "tmp_" + str(randint(1, 1000000)) + ".fas"
         with open(filename, "w") as handle:
             handle.write(result_string)
@@ -205,14 +245,22 @@ class Response(object):
 
 
 class Request(object):
-    """Constructs a :class:`Request <Request>`. Sends it and returns
-    a :class:`Response <Response>` object.
+    """Constructs a :class:`Request <Request>`. Sends HTTP request.
+
+    Returns:
+        A :class:`Response <Response>` object.
+
     """
     def get(self, service, **kwargs):
-        """
-        Does HTTP request to BOLD webservice.
+        """Does HTTP request to BOLD webservice.
 
-        :param service: the BOLD API alias to interact with.
+        Args:
+            service: The BOLD API alias to interact with.
+            kwargs: Paramenters send by users.
+
+        Returns:
+            A Response class containing parsed data as attribute `items`.
+
         """
         params = ''
 
@@ -266,11 +314,16 @@ class Request(object):
 
 
 def request(service, **kwargs):
-    """Build our request. Also do checks for proper use of arguments.
+    """Builds our request based on given arguments. Used internally.
 
-    :param service: the BOLD API alias to interact with.
-    :return: Request object with correct URL:
-             end-point for the API of the service of interest.
+    Args:
+        service: The BOLD API alias to interact with. Examples: `call_id`,
+                 `call_taxon_search`.
+        kwargs: Arguments passed by users when calling our methods.
+
+    Returns:
+        Request object with service alias, correct URL and user arguments.
+
     """
     req = Request()
 
