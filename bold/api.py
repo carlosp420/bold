@@ -63,7 +63,6 @@ class Response(object):
         append = items_from_bold.append
         response = json.loads(result_string)
         if hasattr(response, 'items'):
-            print(response)
             # Is this a simple JSON and we got only one item?
             simple_json = False
             for i in response.keys():
@@ -229,7 +228,6 @@ class Request(object):
                 'taxName': kwargs['taxonomic_identification'],
                 'fuzzy': fuzzy,
             })
-            print(params)
 
         if service == 'call_taxon_data':
             if kwargs['include_tree'] is False:
@@ -253,7 +251,6 @@ class Request(object):
             params = _urlencode(payload)
 
         url = kwargs['url'] + "?" + params
-        print(url)
         req = _Request(url, headers={'User-Agent': 'BiopythonClient'})
         handle = _urlopen(req)
         response = Response()
@@ -263,7 +260,6 @@ class Request(object):
             response._parse_data(service, binary_result)
         else:
             result = _as_string(handle.read())
-            print(result)
             response._parse_data(service, result)
         return response
 
