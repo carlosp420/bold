@@ -1,4 +1,5 @@
-biopython==1.64
+-r requirements.txt
+
 coverage==3.7.1
 coveralls==0.4.4
 docutils==0.12
